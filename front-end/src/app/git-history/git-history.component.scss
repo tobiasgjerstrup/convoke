@@ -10,7 +10,18 @@
     color: yellow;
 }
 
-a {
+.menu-items:hover > .menu-item{
+    opacity: 0.3;
+}
+
+.menu-items:hover > .menu-item:hover{
+    opacity: 1;
+}
+
+.menu-item{
     color: white;
+    display: block;
     text-decoration: none;
+    
+    transition: opacity 400ms ease;
 }

@@ -23,7 +23,7 @@ export class GitHistoryComponent {
       changedFiles: null
     }
   }]
-
+  
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
   ngOnInit() {
