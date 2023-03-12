@@ -1,0 +1,9 @@
+<label>Search:</label>
+<input (keyup.enter)="test($event)">
+
+<div *ngFor="let item of items;">
+    <div *ngIf="item.id">
+        <li style="float:left">{{item.id}} | {{item.name}}</li>
+        <img style="width:16px; height:16px" src='{{"https://convoke.uk/assets/wowicons/large/" + item.icon + ".jpg"}}'>
+    </div>
+</div>
