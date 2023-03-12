@@ -2,7 +2,7 @@ import convert from 'xml-js';
 import axios from 'axios';
 import mysql from 'mysql2';
 import { database } from './config.js';
-// create the connection to database
+
 const connection = mysql.createConnection(database).promise()
 
 async function insertValues(id, name, icon, timestamp) {
@@ -44,7 +44,3 @@ if (!Object.entries(value).length) {
 for (var i = value[0].id; i < 3000000; i++) {
     const res = await wowheadcall(i);
 }
-
-// connection.destroy(function (err) {
-//     if (err) throw err;
-// });

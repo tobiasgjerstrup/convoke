@@ -13,7 +13,7 @@ export class WowComponent {
 
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
-  search(event: any) { // without type info
+  search(event: any) {
     this.http.get<any>('https://convoke.uk/api/v1/$limit=1000$order=asc$search=' + event.target.value).subscribe(data => {
       this.items = data
       if (this.items.length > 0)

@@ -3,7 +3,6 @@ import request from 'request';
 import mysql from 'mysql2';
 import { database } from './config.js';
 
-// create the connection to database
 const connection = mysql.createConnection(database).promise()
 
 async function sqlQuery(query) {

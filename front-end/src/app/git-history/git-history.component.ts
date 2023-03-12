@@ -38,18 +38,3 @@ export class GitHistoryComponent {
     });
   }
 }
-
-
-/*
-commits [
-  0:[
-    author: string
-    stats: [
-      deletions: string
-      additions: string
-    ]
-    time: string
-    url: string
-  ]
-]
-*/
