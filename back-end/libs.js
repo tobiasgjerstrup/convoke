@@ -33,6 +33,9 @@ export function call(call, params) {
     }
     if (params.limit) {
         sql = sql + ' limit ' + params.limit
+        if (params.offset) {
+            sql = sql + ' offset ' + params.offset
+        }
     }
     return sql;
 }
