@@ -34,7 +34,7 @@ http.createServer(function (req, res) {
     console.log(sql);
     result(sql).then(value => {
         res.writeHead(200, { 'Content-Type': 'text/plain' });
-        res.write(JSON.stringify(value));
+        res.write(JSON.stringify(value).replace('[{"count(*)":', '[{"count":'));
         res.end();
     });
 }).listen(8080);
