@@ -6,3 +6,7 @@ front-end/dist*
 back-end/node_modules*
 back-end/config.js
 back-end/customquery.js
+
+scripts/node_modules*
+scripts/output/*
+scripts/config.js
