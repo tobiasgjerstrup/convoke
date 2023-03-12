@@ -1,0 +1,11 @@
+<div *ngFor="let commit of commits;">
+    <div *ngIf="commit.commit.committer.name !== 'GitHub'">
+        <a href = "{{commit.html_url}}">
+        <span>{{commit.commit.committer.name}} </span>
+        <span>{{commit.commit.committer.date}} </span>
+        <span id="additions">{{commit.stats.additions}}</span><span>/</span>
+        <span id="deletions">{{commit.stats.deletions}} </span>
+        <span>{{commit.commit.message}}</span>
+    </a>
+    </div>
+</div>

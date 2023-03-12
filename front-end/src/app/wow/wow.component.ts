@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, TemplateRef } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
 
 @Component({
@@ -14,7 +13,7 @@ export class WowComponent {
 
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
-  test(event: any) { // without type info
+  search(event: any) { // without type info
     this.http.get<any>('https://convoke.uk/api/v1/$limit=1000$order=asc$search=' + event.target.value).subscribe(data => {
       this.items = data
       if (this.items.length > 0)
@@ -24,11 +23,6 @@ export class WowComponent {
 
     });
   }
-
-  showStandard(message: string) {
-    this.toastService.show(message);
-  }
-
   showSuccess(message: string) {
     this.toastService.show(message, { classname: 'bg-success text-light', delay: 5000 });
   }

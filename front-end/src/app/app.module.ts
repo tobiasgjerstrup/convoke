@@ -8,12 +8,14 @@ import { HomeComponent } from './home/home.component';
 import { WowComponent } from './wow/wow.component';
 import { Toasts } from './toasts.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { GitHistoryComponent } from './git-history/git-history.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    WowComponent
+    WowComponent,
+    GitHistoryComponent
     ],
   imports: [
     BrowserModule,
