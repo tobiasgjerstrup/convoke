@@ -8,7 +8,21 @@ import { ToastService } from '../services/toast.service';
   styleUrls: ['./git-history.component.scss']
 })
 export class GitHistoryComponent {
-  commits = [{ commit: { committer: { name: null, date: null }, message: null }, html_url: null, stats: { additions: null, deletions: null }, files: null }]
+  commits = [{
+    commit: {
+      committer: {
+        name: null,
+        date: null
+      },
+      message: null
+    },
+    html_url: null,
+    stats: {
+      additions: null,
+      deletions: null,
+      changedFiles: null
+    }
+  }]
 
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
@@ -16,6 +30,7 @@ export class GitHistoryComponent {
     this.http.get<any>('https://api.github.com/repos/tobiasgjerstrup/convoke/commits').subscribe(data => {
       data.forEach((element: any) => {
         this.http.get<any>(element.url).subscribe(commit => {
+          commit.stats.changedFiles = commit.files.length
           this.commits = this.commits.concat(commit)
         });
       });

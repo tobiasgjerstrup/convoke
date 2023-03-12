@@ -3,6 +3,7 @@
         <a href = "{{commit.html_url}}">
         <span>{{commit.commit.committer.name}} </span>
         <span>{{commit.commit.committer.date}} </span>
+        <span id="changedFiles">{{commit.stats.changedFiles}}</span><span>/</span>
         <span id="additions">{{commit.stats.additions}}</span><span>/</span>
         <span id="deletions">{{commit.stats.deletions}} </span>
         <span>{{commit.commit.message}}</span>
