@@ -1,13 +1,13 @@
 <div class="menu-items">
     <ng-container *ngFor="let commit of commits;">
-        <ng-container *ngIf="commit.commit.committer.name !== 'GitHub'">
-            <a class="menu-item" href="{{commit.html_url}}">
-                <span>{{commit.commit.committer.name}} </span>
-                <span>{{commit.commit.committer.date}} </span>
-                <span id="changedFiles">{{commit.stats.changedFiles}}</span><span>/</span>
-                <span id="additions">{{commit.stats.additions}}</span><span>/</span>
-                <span id="deletions">{{commit.stats.deletions}} </span>
-                <span>{{commit.commit.message}}</span>
+        <ng-container *ngIf="commit.name !== 'GitHub'">
+            <a class="menu-item" href="{{commit.url}}">
+                <span>{{commit.name}} </span>
+                <span>{{commit.date}} </span>
+                <span id="changedFiles">{{commit.changed_files}}</span><span>/</span>
+                <span id="additions">{{commit.additions}}</span><span>/</span>
+                <span id="deletions">{{commit.deletions}} </span>
+                <span>{{commit.message}}</span>
             </a>
         </ng-container>
     </ng-container>

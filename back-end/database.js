@@ -33,6 +33,7 @@ http.createServer(function (req, res) {
     let sql = libs.call(call, params);
     console.log(sql);
     result(sql).then(value => {
+        value = libs.modifyData(value, params);
         res.writeHead(200, { 'Content-Type': 'text/plain' });
         res.write(JSON.stringify(value).replace('[{"count(*)":', '[{"count":'));
         res.end();

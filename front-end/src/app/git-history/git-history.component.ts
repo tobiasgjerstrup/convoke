@@ -9,32 +9,23 @@ import { ToastService } from '../services/toast.service';
 })
 export class GitHistoryComponent {
   commits = [{
-    commit: {
-      committer: {
-        name: null,
-        date: null
-      },
-      message: null
-    },
-    html_url: null,
-    stats: {
-      additions: null,
-      deletions: null,
-      changedFiles: null
-    }
+    name: null,
+    date: null,
+    message: null,
+    url: null,
+    additions: null,
+    deletions: null,
+    changed_files: null
   }]
-  
+
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
   ngOnInit() {
-    this.http.get<any>('https://api.github.com/repos/tobiasgjerstrup/convoke/commits').subscribe(data => {
-      data.forEach((element: any) => {
-        this.http.get<any>(element.url).subscribe(commit => {
-          commit.stats.changedFiles = commit.files.length
-          this.commits = this.commits.concat(commit)
-        });
+    this.http.get<any>('http://localhost:8080/api/v1/$table=gitcommits$order=date').subscribe(commits => {
+      commits.forEach((commit: ConcatArray<{ name: null; date: null; message: null; url: null; additions: null; deletions: null; changed_files: null; }>) => {
+        this.commits = this.commits.concat(commit)
       });
-      this.commits = this.commits.splice(1, 1);
+      this.commits.splice(0, 1)
     });
   }
 }
