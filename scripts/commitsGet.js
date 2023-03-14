@@ -33,7 +33,7 @@ const res = await getCommits();
 
 for (var i = 0; i < res.length; i++) {
     let data = await getCommitData(res[i])
-    await connection.query("insert into gitCommits values ('" + data.name + "', '" + data.date.replace("T", " ").replace("Z", "") + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")")
+    await connection.query("insert into gitCommits values ('" + data.name + "', '" + data.date.replace("T", " ").replace("Z", "") + "', '" + data.message.replaceAll("'", "\"") + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")")
 }
 
 connection.destroy();
