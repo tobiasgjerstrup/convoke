@@ -9,23 +9,31 @@ import { ToastService } from '../services/toast.service';
 })
 export class GitHistoryComponent {
   commits = [{
-    name: null,
-    date: null,
-    message: null,
-    url: null,
-    additions: null,
-    deletions: null,
-    changed_files: null
+    name: '',
+    date: '',
+    message: '',
+    url: '',
+    additions: '',
+    deletions: '',
+    changed_files: '',
+    type: ''
   }]
 
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
   ngOnInit() {
     this.http.get<any>('https://convoke.uk/api/v1/$table=gitcommits$order=date').subscribe(commits => {
-      commits.forEach((commit: ConcatArray<{ name: null; date: null; message: null; url: null; additions: null; deletions: null; changed_files: null; }>) => {
+      commits.forEach((commit: ConcatArray<{ name: string; date: string; message: string; url: string; additions: string; deletions: string; changed_files: string; type: string; }>) => {
         this.commits = this.commits.concat(commit)
       });
       this.commits.splice(0, 1)
+      this.commits.forEach(element => {
+        if (element.message.includes('Merge pull request'))
+          element.type = 'pull request';
+          else 
+          element.type = 'commit'
+      });
+      console.log(this.commits)
     });
   }
 }

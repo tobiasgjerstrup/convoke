@@ -1,6 +1,6 @@
 <div class="menu-items">
     <ng-container *ngFor="let commit of commits;">
-        <ng-container *ngIf="commit.name !== 'GitHub'">
+        <ng-container *ngIf="commit.type !== 'pull request'">
             <a class="menu-item" href="{{commit.url}}">
                 <span>{{commit.name}} </span>
                 <span>{{commit.date}} </span>
