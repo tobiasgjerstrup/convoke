@@ -21,7 +21,7 @@ export class GitHistoryComponent {
   constructor(private http: HttpClient, public toastService: ToastService) { }
 
   ngOnInit() {
-    this.http.get<any>('http://localhost:8080/api/v1/$table=gitcommits$order=date').subscribe(commits => {
+    this.http.get<any>('https://convoke.uk/api/v1/$table=gitcommits$order=date').subscribe(commits => {
       commits.forEach((commit: ConcatArray<{ name: null; date: null; message: null; url: null; additions: null; deletions: null; changed_files: null; }>) => {
         this.commits = this.commits.concat(commit)
       });
