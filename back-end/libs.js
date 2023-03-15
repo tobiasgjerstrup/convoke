@@ -21,7 +21,7 @@ export function call(call, params) {
         default:
             if (params.webhook){
                 pull()
-                return false
+                return 'webhook started'
             }
             params.table = 'items'
             var res = getItems(params)
@@ -98,5 +98,5 @@ function getItems(params) {
 }
 
 function pull() {
-    shelljs.exec('git pull')
+    shelljs.exec('git pull; pm2 restart database')
 }
