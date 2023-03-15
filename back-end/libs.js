@@ -1,3 +1,5 @@
+import shelljs from 'shelljs';
+
 export function getParams(params) {
     let splitParams = {};
     for (var i = 1; i < params.length; i++) {
@@ -14,12 +16,15 @@ export function call(call, params) {
     switch (params.table) {
         case "gitcommits":
             params.table = 'gitCommits'
-            var res = getGitCommits(params);
-            return res
+            var res = getGitCommits(params)
             break;
         default:
+            if (params.webhook){
+                pull()
+                return false
+            }
             params.table = 'items'
-            var res = getItems(params);
+            var res = getItems(params)
             return res
             break;
     }
@@ -90,4 +95,8 @@ function getItems(params) {
         }
     }
     return sql;
+}
+
+function pull() {
+    shelljs.exec('git pull')
 }
