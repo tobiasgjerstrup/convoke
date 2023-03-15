@@ -17,9 +17,10 @@ export function call(call, params) {
         case "gitcommits":
             params.table = 'gitCommits'
             var res = getGitCommits(params)
+            return res
             break;
         default:
-            if (params.webhook){
+            if (params.webhook) {
                 pull()
                 return 'webhook started'
             }
@@ -28,7 +29,7 @@ export function call(call, params) {
             return res
             break;
     }
-    return false;
+    return 'error in call function';
 }
 
 export function modifyData(value, params) {
