@@ -18,7 +18,7 @@ const getCommits = () => axios.get(' https://api.github.com/repos/tobiasgjerstru
 const getCommitData = (url) => axios.get(url, {})
     .then(function (response) {
         return {
-            name: response.data.committer.login,
+            name: response.data.author.login,
             date: response.data.commit.author.date,
             message: response.data.commit.message,
             url: response.data.html_url,
