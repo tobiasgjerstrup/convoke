@@ -9,8 +9,8 @@ await connection.query("delete from gitCommits");
 
 async function getCommits() {
   const response = await libs.getJsonFromURL("https://api.github.com/repos/tobiasgjerstrup/convoke/commits");
-  if (response !== 200) {
-    console.log("script failed getting commits. Status: " + response);
+  if (!response) {
+    console.log("script failed getting commits.");
     return false;
   }
   let commits = [];
@@ -22,8 +22,8 @@ async function getCommits() {
 
 async function getCommitData(url) {
   const response = await libs.getJsonFromURL(url);
-  if (response !== 200) {
-    console.log("script failed getting commits. Status: " + response);
+  if (!response) {
+    console.log("script failed getting commits.");
     return false;
   }
   return modifyData(response);

@@ -43,7 +43,7 @@ export async function getJsonFromURL(url) {
   });
   if (response.status !== 200) {
     console.error("call: " + url + " failed with error code: " + response.status);
-    return response.status;
+    return false;
   }
   console.error("call: " + url + " status: " + response.status);
   return response.data;
