@@ -1,24 +1,33 @@
 import mysql from "mysql2";
 import { database } from "./config.js";
 import axios from "axios";
+import * as libs from "./libs.js";
 
 const connection = mysql.createConnection(database).promise();
 
 await connection.query("delete from gitCommits");
 
-const getCommits = () =>
-  axios.get(" https://api.github.com/repos/tobiasgjerstrup/convoke/commits", {}).then(function (response) {
-    let commits = [];
-    for (var i = 0; i < response.data.length; i++) {
-      commits.push(response.data[i].url);
-    }
-    return commits;
-  });
+async function getCommits() {
+  const response = await libs.getJsonFromURL("https://api.github.com/repos/tobiasgjerstrup/convoke/commits");
+  if (response !== 200) {
+    console.log("script failed getting commits. Status: " + response);
+    return false;
+  }
+  let commits = [];
+  for (var i = 0; i < response.length; i++) {
+    commits.push(response[i].url);
+  }
+  return commits;
+}
 
-const getCommitData = (url) =>
-  axios.get(url, {}).then(function (response) {
-    return modifyData(response);
-  });
+async function getCommitData(url) {
+  const response = await libs.getJsonFromURL(url);
+  if (response !== 200) {
+    console.log("script failed getting commits. Status: " + response);
+    return false;
+  }
+  return modifyData(response);
+}
 
 function modifyData(response) {
   let data = {
@@ -46,9 +55,13 @@ function modifyData(response) {
 }
 
 const res = await getCommits();
-
+if (!res) {
+  console.log("function getCommits failed");
+  process.exit(1);
+}
 for (var i = 0; i < res.length; i++) {
   let data = await getCommitData(res[i]);
+  if (!data) continue;
   await connection.query("insert into gitCommits values ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
   console.log("inserted into DB: ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
 }

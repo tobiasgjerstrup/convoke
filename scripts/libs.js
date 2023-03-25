@@ -35,6 +35,20 @@ export async function deleteAndInsert(id, name, icon, timestamp) {
   return true;
 }
 
+export async function getJsonFromURL(url) {
+  const response = await axios({
+    url,
+    method: "GET",
+    validateStatus: false,
+  });
+  if (response.status !== 200) {
+    console.error("call: " + url + " failed with error code: " + response.status);
+    return response.status;
+  }
+  console.error("call: " + url + " status: " + response.status);
+  return response.data;
+}
+
 export async function getWoWHeadXMLAsJSON(url) {
   const response = await axios({
     url,
