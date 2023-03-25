@@ -13,11 +13,12 @@ async function getAndPush(i) {
 const value = await libs.sqlQuery("SELECT * from items ORDER BY updated LIMIT 1");
 console.log(value);
 if (!Object.entries(value).length) {
-  for (let i = 0; i < 3000000; i++) {
+  for (let i = 0; i < 300000; i++) {
     await getAndPush(i);
   }
 }
 
-for (let i = value[0].id; i < 3000000; i++) {
+for (let i = value[0].id; i < 300000; i++) {
   await getAndPush(i);
 }
+process.exit(0);

@@ -54,3 +54,4 @@ for (var i = 0; i < res.length; i++) {
 }
 
 connection.destroy();
+process.exit(0);

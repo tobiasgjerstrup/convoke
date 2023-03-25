@@ -18,3 +18,4 @@ for (let i = 0; i < values.length; i++) {
 connection.destroy(function (err) {
   if (err) throw err;
 });
+process.exit(0);
