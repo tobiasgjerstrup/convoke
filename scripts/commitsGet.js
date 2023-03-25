@@ -54,4 +54,5 @@ for (var i = 0; i < res.length; i++) {
 }
 
 connection.destroy();
+console.log("script finished");
 process.exit(0);

@@ -21,4 +21,5 @@ if (!Object.entries(value).length) {
 for (let i = value[0].id; i < 300000; i++) {
   await getAndPush(i);
 }
+console.log("script finished");
 process.exit(0);
