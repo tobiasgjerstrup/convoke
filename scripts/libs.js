@@ -20,9 +20,10 @@ export async function downloadImage(url, path) {
     validateStatus: false,
   });
   if (response.status !== 200) {
-    console.log("call: " + url + " failed with error code: " + response.status);
+    console.error("call: " + url + " failed with error code: " + response.status);
     return response.status;
   }
+  console.error("call: " + url + " status: " + response.status);
   const writer = fs.createWriteStream(path);
   response.data.pipe(writer);
   return response.data;
