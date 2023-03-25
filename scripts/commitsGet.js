@@ -34,7 +34,6 @@ function modifyData(response) {
   data.date = data.date.replace("T", " ").replace("Z", "");
   data.message = data.message.replaceAll("'", '"');
 
-  console.log(response.data.files);
   if (response.data.files) {
     response.data.files.forEach((element) => {
       if (element.filename.includes("package-lock.json")) {
@@ -51,6 +50,7 @@ const res = await getCommits();
 for (var i = 0; i < res.length; i++) {
   let data = await getCommitData(res[i]);
   await connection.query("insert into gitCommits values ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
+  console.log("inserted into DB: ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
 }
 
 connection.destroy();
