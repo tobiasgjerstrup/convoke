@@ -23,7 +23,7 @@ export async function downloadImage(url, path) {
     console.error("call: " + url + " failed with error code: " + response.status);
     return response.status;
   }
-  console.error("call: " + url + " status: " + response.status);
+  console.log("call: " + url + " status: " + response.status);
   const writer = fs.createWriteStream(path);
   response.data.pipe(writer);
   return response.data;
@@ -45,7 +45,7 @@ export async function getJsonFromURL(url) {
     console.error("call: " + url + " failed with error code: " + response.status);
     return false;
   }
-  console.error("call: " + url + " status: " + response.status);
+  console.log("call: " + url + " status: " + response.status);
   return response.data;
 }
 

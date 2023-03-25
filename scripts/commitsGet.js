@@ -31,20 +31,20 @@ async function getCommitData(url) {
 
 function modifyData(response) {
   let data = {
-    name: response.data.author.login,
-    date: response.data.commit.author.date,
-    message: response.data.commit.message,
-    url: response.data.html_url,
-    deletions: response.data.stats.deletions,
-    additions: response.data.stats.additions,
-    changed_files: response.data.files.length,
+    name: response.author.login,
+    date: response.commit.author.date,
+    message: response.commit.message,
+    url: response.html_url,
+    deletions: response.stats.deletions,
+    additions: response.stats.additions,
+    changed_files: response.files.length,
   };
 
   data.date = data.date.replace("T", " ").replace("Z", "");
   data.message = data.message.replaceAll("'", '"');
 
-  if (response.data.files) {
-    response.data.files.forEach((element) => {
+  if (response.files) {
+    response.files.forEach((element) => {
       if (element.filename.includes("package-lock.json")) {
         data.deletions -= element.deletions;
         data.additions -= element.additions;
