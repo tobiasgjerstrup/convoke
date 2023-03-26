@@ -6,7 +6,7 @@ async function getAndPush(i) {
     libs.deleteAndInsert(res.wowhead.item._attributes.id, res.wowhead.item.name._cdata.replaceAll('"', "'"), res.wowhead.item.icon._text, new Date().toISOString().slice(0, 10));
     console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
   } else {
-    console.error("item with ID " + i + " was not found");
+    console.log("item with ID " + i + " was not found");
   }
 }
 

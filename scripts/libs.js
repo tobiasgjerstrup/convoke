@@ -53,7 +53,12 @@ export async function getWoWHeadXMLAsJSON(url) {
   const response = await axios({
     url,
     method: "GET",
+    validateStatus: false,
   });
+  if (response.status !== 200) {
+    console.error("call " + url + " failed with status code " + response.status);
+    return false;
+  }
   const string = convert.xml2json(response.data, {
     compact: true,
     space: 4,
