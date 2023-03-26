@@ -5,21 +5,36 @@ async function getAndPush(i) {
   if (res) {
     libs.deleteAndInsert(res.wowhead.item._attributes.id, res.wowhead.item.name._cdata.replaceAll('"', "'"), res.wowhead.item.icon._text, new Date().toISOString().slice(0, 10));
     console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
+    return true;
   } else {
     console.log("item with ID " + i + " was not found");
+    return false;
   }
 }
 
 const value = await libs.sqlQuery("SELECT * from items ORDER BY updated LIMIT 1");
 console.log(value);
-if (!Object.entries(value).length) {
-  for (let i = 0; i < 300000; i++) {
-    await getAndPush(i);
+
+let startIndex = 0;
+
+if (Object.entries(value).length) {
+  startIndex = value[0].id;
+}
+
+let lastAcceptedValue = 1000000;
+
+for (let i = startIndex; i < 1000000; i++) {
+  const response = await getAndPush(i);
+  if (response) {
+    lastAcceptedValue = i;
+  } else {
+    if (i > lastAcceptedValue + 10000) {
+      // if we havent found an item in the past 10k lookups finish script
+      console.log("script finished");
+      process.exit(0);
+    }
   }
 }
 
-for (let i = value[0].id; i < 300000; i++) {
-  await getAndPush(i);
-}
 console.log("script finished");
 process.exit(0);

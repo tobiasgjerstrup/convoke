@@ -64,7 +64,7 @@ export async function getWoWHeadXMLAsJSON(url) {
     space: 4,
   });
   const json = JSON.parse(string);
-  if (json.wowhead.hasOwnProperty("error")) return false;
+  if (Object.prototype.hasOwnProperty.call(json.wowhead, "error")) return false;
   return json;
 }
 

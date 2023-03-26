@@ -1,6 +1,5 @@
 import mysql from "mysql2";
 import { database } from "./config.js";
-import axios from "axios";
 import * as libs from "./libs.js";
 
 const connection = mysql.createConnection(database).promise();
@@ -13,8 +12,8 @@ async function getCommits() {
     console.log("script failed getting commits.");
     return false;
   }
-  let commits = [];
-  for (var i = 0; i < response.length; i++) {
+  const commits = [];
+  for (let i = 0; i < response.length; i++) {
     commits.push(response[i].url);
   }
   return commits;
@@ -30,7 +29,7 @@ async function getCommitData(url) {
 }
 
 function modifyData(response) {
-  let data = {
+  const data = {
     name: response.author.login,
     date: response.commit.author.date,
     message: response.commit.message,
@@ -59,8 +58,8 @@ if (!res) {
   console.log("function getCommits failed");
   process.exit(1);
 }
-for (var i = 0; i < res.length; i++) {
-  let data = await getCommitData(res[i]);
+for (let i = 0; i < res.length; i++) {
+  const data = await getCommitData(res[i]);
   if (!data) continue;
   await connection.query("insert into gitCommits values ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
   console.log("inserted into DB: ('" + data.name + "', '" + data.date + "', '" + data.message + "', '" + data.url + "', " + data.additions + ", " + data.deletions + ", " + data.changed_files + ")");
