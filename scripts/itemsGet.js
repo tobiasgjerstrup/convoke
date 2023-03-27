@@ -3,11 +3,18 @@ import * as libs from "./libs.js";
 async function getAndPush(i) {
   const res = await libs.getWoWHeadXMLAsJSON("https://www.wowhead.com/item=" + i + "&xml");
   if (res) {
-    await libs.deleteAndInsert(res.wowhead.item._attributes.id, res.wowhead.item.name._cdata.replaceAll('"', "'"), res.wowhead.item.icon._text, new Date().toISOString().slice(0, 10));
-    console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
+    await libs.deleteAndInsert(
+      res.wowhead.item._attributes.id, // ID
+      res.wowhead.item.name._cdata.replaceAll('"', "'"), // NAME
+      res.wowhead.item.icon._text, // ICON
+      new Date().toISOString().slice(0, 10), // DATABASE UPDATED TIME
+      res.wowhead.item.class._cdata, // CLASS
+      res.wowhead.item.subclass._cdata // SUBCLASS
+    );
+    console.log(new Date().toISOString() + " " + res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
     return true;
   } else {
-    console.log("item with ID " + i + " was not found");
+    console.log(new Date().toISOString() + " " + "item with ID " + i + " was not found");
     return false;
   }
 }

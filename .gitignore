@@ -10,3 +10,4 @@ back-end/customquery.js
 scripts/node_modules*
 scripts/output/*
 scripts/config.js
+scripts/test.js

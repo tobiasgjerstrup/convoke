@@ -29,9 +29,9 @@ export async function downloadImage(url, path) {
   return response.data;
 }
 
-export async function deleteAndInsert(id, name, icon, timestamp) {
+export async function deleteAndInsert(id, name, icon, timestamp, _class, subclass) {
   await connection.query("DELETE FROM items WHERE id = " + id + ";");
-  await connection.query("insert into items values (" + id + ', "' + name + '", "' + icon + '", "' + timestamp + '")');
+  await connection.query("insert into items values (" + id + ', "' + name + '", "' + icon + '", "' + timestamp + '", "' + _class + '", "' + subclass + '")');
   return true;
 }
 
