@@ -3,7 +3,7 @@ import * as libs from "./libs.js";
 async function getAndPush(i) {
   const res = await libs.getWoWHeadXMLAsJSON("https://www.wowhead.com/item=" + i + "&xml");
   if (res) {
-    libs.deleteAndInsert(res.wowhead.item._attributes.id, res.wowhead.item.name._cdata.replaceAll('"', "'"), res.wowhead.item.icon._text, new Date().toISOString().slice(0, 10));
+    await libs.deleteAndInsert(res.wowhead.item._attributes.id, res.wowhead.item.name._cdata.replaceAll('"', "'"), res.wowhead.item.icon._text, new Date().toISOString().slice(0, 10));
     console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
     return true;
   } else {
