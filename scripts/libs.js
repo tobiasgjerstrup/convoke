@@ -1,10 +1,11 @@
 import axios from "axios";
 import fs from "fs";
-import { database } from "./config.js";
+import { databaseTest, databaseProduction } from "./config.js";
 import mysql from "mysql2";
 import convert from "xml-js";
 
-const connection = mysql.createConnection(database).promise();
+const connection = mysql.createConnection(databaseProduction).promise();
+const connectionTest = mysql.createConnection(databaseTest).promise();
 
 export function sleep(ms) {
   return new Promise((resolve) => {
@@ -32,6 +33,69 @@ export async function downloadImage(url, path) {
 export async function deleteAndInsert(id, name, icon, timestamp, _class, subclass) {
   await connection.query("DELETE FROM items WHERE id = " + id + ";");
   await connection.query("insert into items values (" + id + ', "' + name + '", "' + icon + '", "' + timestamp + '", "' + _class + '", "' + subclass + '")');
+  return true;
+}
+
+export async function insert(db, table, ...args) {
+  const arguements = args;
+  switch(db){
+    case 'test':
+      await connectionTest.query(`insert into ${table} VALUES (?)`, [arguements]);
+    break;
+    case 'production':
+      await connection.query(`insert into ${table} VALUES (?)`, [arguements]);
+    break;
+    default:
+      console.log('no valid db selected')
+    break;
+  }
+  return true;
+}
+
+export async function select(db, table, ...args) {
+  let response
+  switch(db){
+    case 'test':
+      response = await connectionTest.query(`select * from ${table} ${args}`);
+    break;
+    case 'production':
+      response = await connection.query(`select * from ${table} ${args}`);
+    break;
+    default:
+      console.log('no valid db selected')
+      return false
+  }
+  
+  return response[0];
+}
+
+export async function delete_(db, table, coloumn, value) {
+  switch(db){
+    case 'test':
+      await connectionTest.query(`DELETE FROM ${table} WHERE ${coloumn} = ${value}`);
+    break;
+    case 'production':
+      await connection.query(`DELETE FROM ${table} WHERE ${coloumn} = ${value}`);
+    break;
+    default:
+      console.log('no valid db selected')
+    break;
+  }
+  return true;
+}
+
+export async function clearTable(db, table) {
+  switch(db){
+    case 'test':
+      await connectionTest.query(`DELETE FROM ${table}`);
+    break;
+    case 'production':
+      await connection.query(`DELETE FROM ${table}`);
+    break;
+    default:
+      console.log('no valid db selected')
+    break;
+  }
   return true;
 }
 
