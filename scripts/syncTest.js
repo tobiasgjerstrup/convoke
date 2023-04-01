@@ -16,7 +16,7 @@ for (let i = 0; i < itemsData.length; i++) {
 }
 // gitCommits
 for (let i = 0; i < gitCommitsData.length; i++) {
-  await libs.insert('test', "items", gitCommitsData[i].name, gitCommitsData[i].date, gitCommitsData[i].message, gitCommitsData[i].url, gitCommitsData[i].additions, gitCommitsData[i].deletions, gitCommitsData[i].changed_files);
+  await libs.insert('test', "gitCommits", gitCommitsData[i].name, gitCommitsData[i].date, gitCommitsData[i].message, gitCommitsData[i].url, gitCommitsData[i].additions, gitCommitsData[i].deletions, gitCommitsData[i].changed_files);
   console.log(new Date().toISOString().slice(0, 19) + ' Inserted: ' + gitCommitsData[i].message + ' ' + gitCommitsData[i].url)
 }
 
