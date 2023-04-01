@@ -38,63 +38,63 @@ export async function deleteAndInsert(id, name, icon, timestamp, _class, subclas
 
 export async function insert(db, table, ...args) {
   const arguements = args;
-  switch(db){
-    case 'test':
+  switch (db) {
+    case "test":
       await connectionTest.query(`insert into ${table} VALUES (?)`, [arguements]);
-    break;
-    case 'production':
+      break;
+    case "production":
       await connection.query(`insert into ${table} VALUES (?)`, [arguements]);
-    break;
+      break;
     default:
-      console.log('no valid db selected')
-    break;
+      console.log("no valid db selected");
+      break;
   }
   return true;
 }
 
 export async function select(db, table, ...args) {
-  let response
-  switch(db){
-    case 'test':
+  let response;
+  switch (db) {
+    case "test":
       response = await connectionTest.query(`select * from ${table} ${args}`);
-    break;
-    case 'production':
+      break;
+    case "production":
       response = await connection.query(`select * from ${table} ${args}`);
-    break;
+      break;
     default:
-      console.log('no valid db selected')
-      return false
+      console.log("no valid db selected");
+      return false;
   }
-  
+
   return response[0];
 }
 
 export async function delete_(db, table, coloumn, value) {
-  switch(db){
-    case 'test':
+  switch (db) {
+    case "test":
       await connectionTest.query(`DELETE FROM ${table} WHERE ${coloumn} = ${value}`);
-    break;
-    case 'production':
+      break;
+    case "production":
       await connection.query(`DELETE FROM ${table} WHERE ${coloumn} = ${value}`);
-    break;
+      break;
     default:
-      console.log('no valid db selected')
-    break;
+      console.log("no valid db selected");
+      break;
   }
   return true;
 }
 
 export async function clearTable(db, table) {
-  switch(db){
-    case 'test':
+  switch (db) {
+    case "test":
       await connectionTest.query(`DELETE FROM ${table}`);
-    break;
-    case 'production':
+      break;
+    case "production":
       await connection.query(`DELETE FROM ${table}`);
-    break;
+      break;
     default:
-      console.log('no valid db selected')
-    break;
+      console.log("no valid db selected");
+      break;
   }
   return true;
 }

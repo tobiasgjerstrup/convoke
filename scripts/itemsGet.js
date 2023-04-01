@@ -11,10 +11,10 @@ async function getAndPush(i) {
       res.wowhead.item.class._cdata, // CLASS
       res.wowhead.item.subclass._cdata // SUBCLASS
     );
-    console.log(new Date().toISOString() + " " + res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
+    console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
     return true;
   } else {
-    console.log(new Date().toISOString() + " " + "item with ID " + i + " was not found");
+    console.log("item with ID " + i + " was not found");
     return false;
   }
 }
