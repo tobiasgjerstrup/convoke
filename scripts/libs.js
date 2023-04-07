@@ -136,3 +136,9 @@ export async function sqlQuery(query) {
   const result = await connection.query(query);
   return result[0];
 }
+
+export async function stopScript() {
+  connection.destroy();
+  console.log("script finished");
+  process.exit(0);
+}
