@@ -84,13 +84,13 @@ export async function delete_(db, table, coloumn, value) {
   return true;
 }
 
-export async function clearTable(db, table) {
+export async function clearTable(db, table, condition = '') {
   switch (db) {
     case "test":
-      await connectionTest.query(`DELETE FROM ${table}`);
+      await connectionTest.query(`DELETE FROM ${table} ${condition}`);
       break;
     case "production":
-      await connection.query(`DELETE FROM ${table}`);
+      await connection.query(`DELETE FROM ${table} ${condition}`);
       break;
     default:
       console.log("no valid db selected");
@@ -141,4 +141,20 @@ export async function stopScript() {
   connection.destroy();
   console.log("script finished");
   process.exit(0);
+}
+
+export async function zeroAuthGet(url, accessToken) {
+  const response = await axios({
+    url,
+    method: "GET",
+    validateStatus: false,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (response.status !== 200) {
+    console.error("call " + url + " failed with status code " + response.status);
+    return false;
+  }
+  return response.data;
 }

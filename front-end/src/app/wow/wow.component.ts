@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, TemplateRef } from '@angular/core';
+import { Component, Inject, Renderer2 } from '@angular/core';
 import { ToastService } from '../services/toast.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-wow',
@@ -11,7 +12,15 @@ export class WowComponent {
 
   items = [{ id: null, name: null, icon: null }]
 
-  constructor(private http: HttpClient, public toastService: ToastService) { }
+  constructor(private http: HttpClient, public toastService: ToastService, private _renderer2: Renderer2, @Inject(DOCUMENT) private _document: Document) { }
+
+  public ngOnInit() {
+
+    //load scripts
+    let script = this._renderer2.createElement('script');
+    script.src = "https://wow.zamimg.com/js/tooltips.js";
+    this._renderer2.appendChild(this._document.body, script);
+  }
 
   search(event: any) {
     this.http.get<any>('https://convoke.uk/api/v1/$count=true$search=' + event.target.value).subscribe(count => {
