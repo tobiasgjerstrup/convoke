@@ -9,7 +9,8 @@ async function getAndPush(i) {
       res.wowhead.item.icon._text, // ICON
       new Date().toISOString().slice(0, 10), // DATABASE UPDATED TIME
       res.wowhead.item.class._cdata, // CLASS
-      res.wowhead.item.subclass._cdata // SUBCLASS
+      res.wowhead.item.subclass._cdata, // SUBCLASS
+      res.wowhead.item.quality._attributes.id // QUALITY
     );
     console.log(res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
     return true;
