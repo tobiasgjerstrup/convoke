@@ -4,7 +4,8 @@
 <div *ngFor="let item of items;">
     <div *ngIf="item.id">
         <a target="_blank" href="https://www.wowhead.com/item={{item.id}}">
-            <li style="float:left">{{item.id}} | {{item.name}}</li>
+            <li style="float:left" [ngStyle]="{color: getQuality(item.quality)}">
+                {{item.id}} | {{item.name}}</li>
             <img style="width:16px; height:16px" src='{{"https://convoke.uk/assets/wowicons/large/" + item.icon + ".jpg"}}'>
             </a>
         </div>
