@@ -30,7 +30,7 @@ async function getAndPush(i) {
     }
 
     // IF DIFFS
-    if ((DBData[0].quality !== null) || (DBData[0].name === WoWHeadData.name && DBData[0].icon === WoWHeadData.icon && DBData[0].class === WoWHeadData.class && DBData[0].subclass === WoWHeadData.subclass && DBData[0].quality.toString() === WoWHeadData.quality)) {
+    if ((DBData[0].quality !== null) && (DBData[0].name === WoWHeadData.name && DBData[0].icon === WoWHeadData.icon && DBData[0].class === WoWHeadData.class && DBData[0].subclass === WoWHeadData.subclass && DBData[0].quality.toString() === WoWHeadData.quality)) {
       console.log("this is the same on wowhead & DB: " + res.wowhead.item._attributes.id + " " + res.wowhead.item.name._cdata);
       return true;
     } else {
