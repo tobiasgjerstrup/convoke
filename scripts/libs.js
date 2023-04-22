@@ -30,9 +30,9 @@ export async function downloadImage(url, path) {
   return response.data;
 }
 
-export async function deleteAndInsert(id, name, icon, timestamp, _class, subclass, quality) {
+export async function deleteAndInsert(id, name, icon, _class, subclass, quality) {
   await connection.query("DELETE FROM items WHERE id = " + id + ";");
-  await connection.query("insert into items values (" + id + ', "' + name + '", "' + icon + '", "' + timestamp + '", "' + _class + '", "' + subclass + '", "' + quality + '")');
+  await connection.query("insert into items values (" + id + ', "' + name + '", "' + icon + '", "' + _class + '", "' + subclass + '", "' + quality + '", CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)');
   return true;
 }
 
@@ -97,6 +97,23 @@ export async function clearTable(db, table, condition = '') {
       break;
   }
   return true;
+}
+
+export async function updateTable(db, table, id, ...args) {
+  let response;
+  switch (db) {
+    case "test":
+      response = await connectionTest.query(`UPDATE ${table} SET ${args} WHERE id = ${id}`);
+      break;
+    case "production":
+      response = await connection.query(`UPDATE ${table} SET ${args} WHERE id = ${id}`);
+      break;
+    default:
+      console.log("no valid db selected");
+      return false;
+  }
+
+  return response[0];
 }
 
 export async function getJsonFromURL(url) {

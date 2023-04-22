@@ -11,7 +11,7 @@ await libs.clearTable("test", "gitCommits");
 // SEED TEST WITH DATA FROM PRODUCTION
 // items
 for (let i = 0; i < itemsData.length; i++) {
-  await libs.insert("test", "items", itemsData[i].id, itemsData[i].name, itemsData[i].icon, itemsData[i].updated, itemsData[i].class, itemsData[i].subclass, itemsData[i].quality);
+  await libs.insert("test", "items", itemsData[i].id, itemsData[i].name, itemsData[i].icon, itemsData[i].class, itemsData[i].subclass, itemsData[i].quality, itemsData[i].last_update, itemsData[i].created);
   console.log(" Inserted: " + itemsData[i].id + " " + itemsData[i].name);
 }
 // gitCommits
