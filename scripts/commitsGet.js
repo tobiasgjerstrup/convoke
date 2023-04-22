@@ -7,7 +7,7 @@ const connection = mysql.createConnection(database).promise();
 await connection.query("delete from gitCommits");
 
 async function getCommits() {
-  const response = await libs.getJsonFromURL("https://api.github.com/repos/tobiasgjerstrup/convoke/commits");
+  const response = await libs.getJsonFromURL("https://api.github.com/repos/tobiasgjerstrup/convoke/commits?per_page=100");
   if (!response) {
     console.log("script failed getting commits.");
     return false;
