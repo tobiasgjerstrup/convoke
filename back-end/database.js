@@ -23,7 +23,7 @@ http.createServer(function (req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
     res.setHeader('Access-Control-Allow-Headers', '*');
     let call = req.url.replaceAll('%20', ' ').split('/')
-    let tmp = req.url.replaceAll('%20', ' ').split('$')
+    let tmp = req.url.replaceAll('%20', ' ').split(/([?&])/)
     let params = libs.getParams(tmp)
 
     if (call[1] !== 'api' || call[2] !== 'v1') {
