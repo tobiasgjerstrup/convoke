@@ -10,7 +10,7 @@ import { DOCUMENT } from '@angular/common';
 })
 export class WowComponent {
   items = [{ id: null, name: null, icon: null, quality: 0 }];
-  apiSite = 'http://localhost:8080'; // 'https://convoke.uk' 'http://localhost:8080'
+  apiSite = 'https://convoke.uk'; // 'https://convoke.uk' 'http://localhost:8080'
   order = 'id';
 
   maxResults = 2000;
