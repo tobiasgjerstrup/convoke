@@ -1,14 +1,14 @@
 <label>Search:</label>
-<input (keyup.enter)="search($event)">
+<input (keyup.enter)="search($event)" />
+<span> Custom sort:</span><input (keyup)="updateOrder($event)" />
 
-<div *ngFor="let item of items;">
-    <div *ngIf="item.id">
-        <a target="_blank" href="https://www.wowhead.com/item={{item.id}}">
-            <li style="float:left" [ngStyle]="{color: getQuality(item.quality)}">
-                {{item.id}} | {{item.name}}</li>
-            <img style="width:16px; height:16px" src='{{"https://convoke.uk/assets/wowicons/large/" + item.icon + ".jpg"}}'>
-            </a>
-        </div>
+<div *ngFor="let item of items">
+  <div *ngIf="item.id">
+    <a target="_blank" href="https://www.wowhead.com/item={{ item.id }}">
+      <li style="float: left" [ngStyle]="{ color: getQuality(item.quality) }">{{ item.id }} | {{ item.name }}</li>
+      <img style="width: 16px; height: 16px" src="{{ 'https://convoke.uk/assets/wowicons/large/' + item.icon + '.jpg' }}" />
+    </a>
+  </div>
 </div>
 
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
