@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Inject, Renderer2 } from '@angular/core';
 import { ToastService } from '../services/toast.service';
 import { DOCUMENT } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-wow',
@@ -9,8 +10,8 @@ import { DOCUMENT } from '@angular/common';
   styleUrls: ['./wow.component.scss'],
 })
 export class WowComponent {
+  apiUrl = environment.apiUrl
   items = [{ id: null, name: null, icon: null, quality: 0 }];
-  apiSite = 'https://convoke.uk'; // 'https://convoke.uk' 'http://localhost:8080'
   order = 'id';
 
   maxResults = 2000;
@@ -50,7 +51,7 @@ export class WowComponent {
     this.order = event.target.value;
   }
   search(event: any) {
-    this.http.get<any>(this.apiSite + '/api/v1/?count=true&search=' + event.target.value).subscribe((count) => {
+    this.http.get<any>(this.apiUrl + 'api/v2/?count=true&search=' + event.target.value).subscribe((count) => {
       console.log(count[0].count);
       if (count[0].count > this.maxResults) {
         this.showDanger('Found ' + count[0].count + ' Items' + ' Limit is ' + this.maxResults);
@@ -58,10 +59,10 @@ export class WowComponent {
       } else if (count[0].count > 0) this.showSuccess('Found ' + count[0].count + ' Items');
       else this.showDanger('Your search gave 0 results');
       const initResults = this.maxResults - this.lazyResults;
-      this.http.get<any>(this.apiSite + '/api/v1/?limit=' + initResults + '&order=' + this.order + '&search=' + event.target.value).subscribe((data) => {
+      this.http.get<any>(this.apiUrl + 'api/v2/?limit=' + initResults + '&order=' + this.order + '&search=' + event.target.value).subscribe((data) => {
         this.items = data;
         if (count[0].count > initResults) {
-          this.http.get<any>(this.apiSite + '/api/v1/?limit=' + this.lazyResults + '&order=' + this.order + '&offset=' + initResults + '&search=' + event.target.value).subscribe((extraData) => {
+          this.http.get<any>(this.apiUrl + 'api/v2/?limit=' + this.lazyResults + '&order=' + this.order + '&offset=' + initResults + '&search=' + event.target.value).subscribe((extraData) => {
             this.items = this.items.concat(extraData);
           });
         }
