@@ -42,12 +42,12 @@ app.get("/api/v1/git", async (req, res) => {
 
 // under here is testing stuff
 app.get("/api/v1", (req, res) => {
-  console.log(req.session);
   // req.session.user = "convoke";
   res.send({ user: req.session.user });
 });
 
-app.post("/api/v1/signup", async (req, res) => {
+app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, res) => {
+  console.log('signup')
   if (!("user" in req.body) || !("pass" in req.body)) {
     res.send({ data: "missing body" });
     return;
@@ -63,6 +63,7 @@ app.post("/api/v1/signup", async (req, res) => {
 });
 
 app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, res) => {
+  console.log('signin')
   req.session.regenerate(async function (err) {
     if (err) next(err);
     if (!("user" in req.body) || !("pass" in req.body)) {
