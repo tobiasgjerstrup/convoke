@@ -54,6 +54,7 @@ export async function insert(db, table, ...args) {
 
 export async function select(db, table, ...args) {
   let response;
+  console.log(`select * from ${table} ${args}`);
   switch (db) {
     case "test":
       response = await connectionTest.query(`select * from ${table} ${args}`);
@@ -65,8 +66,23 @@ export async function select(db, table, ...args) {
       console.log("no valid db selected");
       return false;
   }
-
   return response[0];
+}
+export async function count(db, table, ...args) {
+  let response;
+  switch (db) {
+    case "test":
+      response = await connectionTest.query(`select COUNT(*) as count from ${table} ${args}`);
+      break;
+    case "production":
+      response = await connection.query(`select COUNT(*) as count from ${table} ${args}`);
+      break;
+    default:
+      console.log("no valid db selected");
+      return false;
+  }
+
+  return response[0][0];
 }
 
 export async function delete_(db, table, coloumn, value) {

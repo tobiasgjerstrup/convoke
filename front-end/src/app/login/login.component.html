@@ -1,0 +1,10 @@
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+<form action="{{apiUrl}}api/v1/signin" method="post" target="dummyframe">
+  Username: <input name="user" /> Password: <input name="pass" type="password" />
+  <input type="submit" text="Login" />
+</form>
+
+<button (click)="testGet()"> hey </button>
+
+<a href="{{apiUrl}}logout">Logout</a>
