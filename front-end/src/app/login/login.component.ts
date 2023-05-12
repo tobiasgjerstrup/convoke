@@ -14,7 +14,7 @@ export class LoginComponent {
   constructor(private http: HttpClient, public toastService: ToastService) {}
 
   testGet() {
-    this.http.get<any>(this.apiUrl+'api/v2').subscribe((data) => {
+    this.http.get<any>(this.apiUrl+'api/v1').subscribe((data) => {
       console.log(data)
     });
   }

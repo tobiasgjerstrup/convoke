@@ -51,19 +51,19 @@ export class WowComponent {
     this.order = event.target.value;
   }
   search(event: any) {
-    this.http.get<any>(this.apiUrl + 'api/v2/?count=true&search=' + event.target.value).subscribe((count) => {
-      console.log(count[0].count);
-      if (count[0].count > this.maxResults) {
-        this.showDanger('Found ' + count[0].count + ' Items' + ' Limit is ' + this.maxResults);
+    this.http.get<any>(this.apiUrl + 'api/v1/items/count?search=' + event.target.value).subscribe((res) => {
+      let count = res.data.count;
+      if (count > this.maxResults) {
+        this.showDanger('Found ' + count + ' Items' + ' Limit is ' + this.maxResults);
         this.showSuccess('Showing ' + this.maxResults + ' Items');
-      } else if (count[0].count > 0) this.showSuccess('Found ' + count[0].count + ' Items');
+      } else if (count > 0) this.showSuccess('Found ' + count + ' Items');
       else this.showDanger('Your search gave 0 results');
       const initResults = this.maxResults - this.lazyResults;
-      this.http.get<any>(this.apiUrl + 'api/v2/?limit=' + initResults + '&order=' + this.order + '&search=' + event.target.value).subscribe((data) => {
-        this.items = data;
-        if (count[0].count > initResults) {
-          this.http.get<any>(this.apiUrl + 'api/v2/?limit=' + this.lazyResults + '&order=' + this.order + '&offset=' + initResults + '&search=' + event.target.value).subscribe((extraData) => {
-            this.items = this.items.concat(extraData);
+      this.http.get<any>(this.apiUrl + 'api/v1/items?limit=' + initResults + '&orderby=' + this.order + '&search=' + event.target.value).subscribe((res) => {
+        this.items = res.data;
+        if (count > initResults) {
+          this.http.get<any>(this.apiUrl + 'api/v1/items?limit=' + this.lazyResults + '&orderby=' + this.order + '&offset=' + initResults + '&search=' + event.target.value).subscribe((res) => {
+            this.items = this.items.concat(res.data);
           });
         }
       });

@@ -15,7 +15,7 @@ export class AppComponent {
   constructor(private http: HttpClient, public toastService: ToastService) {}
 
   login() {
-    this.http.get<any>(this.apiUrl+'api/v2').subscribe((data) => {
+    this.http.get<any>(this.apiUrl+'api/v1').subscribe((data) => {
       console.log(data);
       this.user = data.user;
     });

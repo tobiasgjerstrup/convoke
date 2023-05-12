@@ -1,11 +1,11 @@
-import { database } from "./config.js";
 import * as libs from "../scripts/libs.js";
 import express from "express";
 import session from "express-session";
 import cors from "cors";
+import * as sys from "./system.js";
 const app = express();
 
-// V2
+// v1
 app.use(
   cors({
     origin: "*",
@@ -21,13 +21,27 @@ app.use(
   })
 );
 
-app.get("/api/v2", (req, res) => {
+app.get("/api/v1/items", async (req, res) => {
+  const data = await sys.getItems(req.query);
+  console.log('items')
+  res.send({ data: data });
+});
+
+app.get("/api/v1/items/count", async (req, res) => {
+  const data = await sys.getCount(req.query);
+  console.log('count')
+  console.log(data)
+  res.send({ data });
+});
+
+// under here is testing stuff
+app.get("/api/v1", (req, res) => {
   console.log(req.session);
-  req.session.user = 'convoke';
+  // req.session.user = "convoke";
   res.send({ user: req.session.user });
 });
 
-app.post("/api/v2/signup", async (req, res) => {
+app.post("/api/v1/signup", async (req, res) => {
   console.log(req.body);
   if (!("user" in req.body) || !("pass" in req.body)) {
     res.send({ data: "missing body" });
@@ -46,7 +60,7 @@ app.post("/api/v2/signup", async (req, res) => {
   console.log("😎user created");
 });
 
-app.post("/api/v2/signin", express.urlencoded({ extended: true }), async (req, res) => {
+app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, res) => {
   req.session.regenerate(async function (err) {
     if (err) next(err);
     console.log(req.body);
@@ -77,30 +91,4 @@ app.post("/api/v2/signin", express.urlencoded({ extended: true }), async (req, r
   });
 });
 
-
 app.listen(8080);
-// V1
-/* http
-  .createServer(function (req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Request-Method", "*");
-    res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET");
-    res.setHeader("Access-Control-Allow-Headers", "*");
-    let call = req.url.replaceAll("%20", " ").split("/");
-    let tmp = req.url.replaceAll("%20", " ").split(/([?&])/);
-    let params = libsold.getParams(tmp);
-
-    if (call[1] !== "api" || call[2] !== "v1") {
-      return;
-    }
-
-    let sql = libsold.call(call, params);
-    console.log(sql);
-    result(sql).then((value) => {
-      value = libsold.modifyData(value, params);
-      res.writeHead(200, { "Content-Type": "text/plain" });
-      res.write(JSON.stringify(value).replace('[{"count(*)":', '[{"count":'));
-      res.end();
-    });
-  })
-  .listen(8080); */
