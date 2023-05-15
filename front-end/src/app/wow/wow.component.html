@@ -1,6 +1,4 @@
-<label>Search:</label>
-<input (keyup.enter)="search($event)" />
-<span> Custom sort:</span><input (keyup)="updateOrder($event)" />
+<label>Search:</label><input (keyup.enter)="search($event)" /> <span> Custom sort:</span><input (keyup)="updateOrder($event)" />
 
 <div *ngFor="let item of items">
   <div *ngIf="item.id">
@@ -10,5 +8,3 @@
     </a>
   </div>
 </div>
-
-<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>

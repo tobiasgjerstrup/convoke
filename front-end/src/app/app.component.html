@@ -1,16 +1,11 @@
-<div *ngIf="!user">
-  <iframe name="dummyframe" id="dummyframe" style="display: none"></iframe>
-
-  <form action="{{ apiUrl }}api/v1/signin" method="post" target="dummyframe">
-    Username: <input name="user" /> Password: <input name="pass" type="password" />
-    <input (click)="login()" type="submit" value="Login" />
-  </form>
-  <form action="{{ apiUrl }}api/v1/signup" method="post" target="dummyframe">
-    Username: <input name="user" /> Password: <input name="pass" type="password" />
-    <input (click)="login()" type="submit" value="Register" />
-  </form>
-</div>
 <div *ngIf="user">
   <span>{{ user }}</span>
 </div>
+
+<label>username:</label><input (keyup)="updateField('user', $event)" />
+<label>password:</label><input (keyup.enter)="login()" (keyup)="updateField('pass', $event)" />
+<button (click)="login()">Login!</button>
+<button (click)="register()">Register!</button>
 <router-outlet></router-outlet>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
