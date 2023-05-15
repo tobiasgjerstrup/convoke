@@ -37,20 +37,17 @@ export class AppComponent {
       this.showToast(data.statuscode, data.message);
       this.user = data.user;
     });
-
-    console.log(test);
-
-    /*    this.http.get<any>(this.apiUrl+'api/v1').subscribe((data) => {
-      console.log(data);
-      this.user = data.user;
-    }); */
   }
 
-  showToast(statuscode: string, message: string){
-    if (statuscode == '200')
-    this.showSuccess(message);
-    else 
-    this.showDanger(message);
+  ngOnInit() {
+    this.http.get<any>(this.apiUrl + 'api/v1').subscribe((data) => {
+      this.user = data.user;
+    });
+  }
+
+  showToast(statuscode: string, message: string) {
+    if (statuscode == '200') this.showSuccess(message);
+    else this.showDanger(message);
   }
 
   showSuccess(message: string) {

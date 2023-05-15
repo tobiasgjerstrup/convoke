@@ -23,31 +23,30 @@ app.use(
 
 app.get("/api/v1/items", async (req, res) => {
   const data = await sys.getItems(req.query);
-  console.log('items')
+  console.log("items");
   res.send({ data: data });
 });
 
 app.get("/api/v1/items/count", async (req, res) => {
   const data = await sys.getCount(req.query);
-  console.log('count')
+  console.log("count");
   res.send({ data });
 });
 
 app.get("/api/v1/git", async (req, res) => {
   const data = await sys.getCommits(req.query);
-  console.log('git')
+  console.log("git");
   res.send({ data });
 });
 
-
 // under here is testing stuff
-/* app.get("/api/v1", (req, res) => { */
-  /* req.session.user = "convoke"; */
-/*   res.send({ user: req.session.user });
-}); */
+app.get("/api/v1", (req, res) => {
+  //  req.session.user = "convoke";
+  res.send({ user: req.session.user });
+});
 
 app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, res) => {
-  console.log('signup')
+  console.log("signup");
   if (!("user" in req.body) || !("pass" in req.body)) {
     res.status(200);
     res.send({ statuscode: 401, message: "missing body" });
@@ -66,12 +65,12 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
 });
 
 app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, res) => {
-  console.log('signin')
+  console.log("signin");
   req.session.regenerate(async function (err) {
     if (err) next(err);
     if (!("user" in req.body) || !("pass" in req.body)) {
       res.status(200);
-      res.send({ statuscode: 401,  message: "missing body" });
+      res.send({ statuscode: 401, message: "missing body" });
       return;
     }
 
@@ -81,7 +80,7 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
       res.send({ statuscode: 401, message: "user not found" });
       return;
     }
-    
+
     res.status(200);
     res.send({ statuscode: 200, message: "Logged in!", user: req.body.user });
 
