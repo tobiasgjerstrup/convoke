@@ -77,10 +77,16 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
       res.send({ statuscode: 401, message: "missing body" });
       return;
     }
+    if (user[0] === undefined) {
+      res.status(200);
+      res.send({ statuscode: 401, message: "user not found" });
+      return;
+    }
 
     const user = await libs.select("production", "users", `where username = '${req.body.user}'`);
     const matchingPassword = await sys.compareHashWithValue(user[0].password, req.body.pass);
-    if (user[0] === undefined || !matchingPassword) {
+    
+    if (!matchingPassword) {
       res.status(200);
       res.send({ statuscode: 401, message: "user not found" });
       return;
