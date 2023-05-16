@@ -3,6 +3,7 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import * as sys from "./system.js";
+
 const app = express();
 
 // v1
@@ -66,6 +67,7 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
 
 app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, res) => {
   console.log("signin");
+
   req.session.regenerate(async function (err) {
     if (err) next(err);
     if (!("user" in req.body) || !("pass" in req.body)) {
@@ -74,13 +76,15 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
       return;
     }
 
-    const usernameTaken = await libs.select("production", "users", `where username = '${req.body.user}' and password = '${req.body.pass}'`);
-    if (usernameTaken[0] === undefined) {
+    const hashedPassword = await sys.hashValue(req.body.pass);
+    const user = await libs.select("production", "users", `where username = '${req.body.user}'`);
+    const matchingPassword = await sys.compareHashWithValue(user[0].password, hashedPassword)
+    if (user[0] === undefined || !matchingPassword) {
       res.status(200);
       res.send({ statuscode: 401, message: "user not found" });
       return;
     }
-
+    console.log('logged in cuz' + user[0] + ' and ' + matchingPassword)
     res.status(200);
     res.send({ statuscode: 200, message: "Logged in!", user: req.body.user });
 

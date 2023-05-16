@@ -3,7 +3,7 @@
 </div>
 
 <label>username:</label><input (keyup)="updateField('user', $event)" />
-<label>password:</label><input (keyup.enter)="login()" (keyup)="updateField('pass', $event)" />
+<label>password:</label><input (keyup)="updateField('pass', $event)" type="password" />
 <button (click)="login()">Login!</button>
 <button (click)="register()">Register!</button>
 <router-outlet></router-outlet>
