@@ -55,12 +55,10 @@ export async function hashValue(value) {
   const saltRounds = 10;
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(value, salt);
-  console.log(hash);
   return hash;
 }
 
 export async function compareHashWithValue(value, hash) {
-  const result = await bcrypt.compare(value, hash);
-  console.log(result);
+  const result = await bcrypt.compare(hash, value);
   return result;
 }
