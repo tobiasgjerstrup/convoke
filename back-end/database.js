@@ -53,14 +53,16 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
     res.send({ statuscode: 401, message: "missing body" });
     return;
   }
-
   const usernameTaken = await libs.select("production", "users", `where username = '${req.body.user}'`);
   if (usernameTaken[0] !== undefined) {
     res.status(200);
     res.send({ statuscode: 401, message: "username taken" });
     return;
   }
-  await libs.insert("production", "users", req.body.user, req.body.pass);
+  
+  const hashedPassword = await sys.hashValue(req.body.pass);
+
+  await libs.insert("production", "users", req.body.user, hashedPassword);
   res.status(200);
   res.send({ statuscode: 200, message: "😎user created" });
 });
@@ -78,13 +80,13 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
 
     const hashedPassword = await sys.hashValue(req.body.pass);
     const user = await libs.select("production", "users", `where username = '${req.body.user}'`);
-    const matchingPassword = await sys.compareHashWithValue(user[0].password, hashedPassword)
+    const matchingPassword = await sys.compareHashWithValue(user[0].password, hashedPassword);
     if (user[0] === undefined || !matchingPassword) {
       res.status(200);
       res.send({ statuscode: 401, message: "user not found" });
       return;
     }
-    console.log('logged in cuz' + user[0] + ' and ' + matchingPassword)
+    console.log("logged in cuz" + user[0] + " and " + matchingPassword);
     res.status(200);
     res.send({ statuscode: 200, message: "Logged in!", user: req.body.user });
 
