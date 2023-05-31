@@ -9,7 +9,8 @@ let petScore = 0;
 
 const accessToken =  await libs.credentialAuthPost(`https://oauth.battle.net/token`, blizzardClient.client_id, blizzardClient.client_secret);
 if (accessToken === false){
-console.error('')
+    console.error('bad access token');  
+    process.exit(0);
 }
 const petData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/collections/pets?namespace=profile-${region}`, accessToken.access_token);
 if (petData !== undefined) {
