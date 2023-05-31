@@ -191,3 +191,22 @@ export async function zeroAuthGet(url, accessToken) {
   }
   return response.data;
 }
+
+export async function credentialAuthPost(URL, USERNAME, PASSWORD) {
+  const response = await axios({
+    url: URL,
+    method: "POST",
+    validateStatus: false,
+    data: "grant_type=client_credentials",
+    auth: {
+      username: USERNAME,
+      password: PASSWORD,
+    },
+  });
+  if (response.status !== 200) {
+    console.log(response.data)
+    console.error("call " + URL + " failed with status code " + response.status);
+    return false;
+  }
+  return response.data;
+}
