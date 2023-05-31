@@ -42,7 +42,6 @@ app.get("/api/v1/git", async (req, res) => {
 
 // under here is testing stuff
 app.get("/api/v1", (req, res) => {
-  //  req.session.user = "convoke";
   res.send({ user: req.session.user });
 });
 
@@ -105,6 +104,16 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
       if (err) return next(err);
     });
   });
+});
+
+app.post("/api/v1/logout", (req, res) => {
+
+  if (req.session.user !== undefined) {
+    delete req.session.user
+    res.send({ statuscode: 200, message: "Logged out!" });
+  } else {
+    res.send({ statuscode: 200, message: "Already logged out!" });
+  }
 });
 
 app.listen(8080);
