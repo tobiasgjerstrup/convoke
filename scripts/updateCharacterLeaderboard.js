@@ -6,7 +6,7 @@ const realm = "Quelthalas".toLowerCase().split(" ").join("-").split("'").join(""
 const region = "EU".toLowerCase();
 
 let petScore = 0;
-
+let pets = 0;
 const accessToken =  await libs.credentialAuthPost(`https://oauth.battle.net/token`, blizzardClient.client_id, blizzardClient.client_secret);
 if (accessToken === false){
     console.error('bad access token');  
@@ -14,6 +14,7 @@ if (accessToken === false){
 }
 const petData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/collections/pets?namespace=profile-${region}`, accessToken.access_token);
 if (petData !== undefined) {
+  pets = petData.pets.length;
   for (let i = 0; i < petData.pets.length; i++) {
     switch (petData.pets[i].quality.type) {
       case "POOR":
@@ -32,11 +33,9 @@ if (petData !== undefined) {
         console.error(petData.pets[i].quality.type + " is not a valid quality for pets");
         break;
     }
-    /*    console.log(petData.pets[i].level);
-    console.log(petData.pets[i].quality.type); */
   }
 }
-console.log(await libs.insert("test", "wow_leaderboard", region, realm, name, 0, 0, 0, 0, petScore, 0, 0, 0, 0, 0, 0, 0, new Date()));
-console.log(await libs.select("test", "wow_leaderboard"));
+await libs.insert("test", "wow_leaderboard", region, realm, name, 0, 0, 0, pets, petScore, 0, 0, 0, 0, 0, 0, 0, new Date());
+// console.log(await libs.select("test", "wow_leaderboard"));
 
-process.exit(0);
+libs.stopScript();
