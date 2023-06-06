@@ -12,10 +12,6 @@ const characters = [
   { name: "Dìspy", realm: "azjolnerub", region: "EU" },
 ];
 
-let petScore = 0;
-let pets = 0;
-let mounts = 0;
-let toys = 0;
 const accessToken = await libs.credentialAuthPost(`https://oauth.battle.net/token`, blizzardClient.client_id, blizzardClient.client_secret);
 if (accessToken === false) {
   console.error("bad access token");
@@ -23,6 +19,17 @@ if (accessToken === false) {
 }
 
 for (let charIndex = 0; charIndex < characters.length; charIndex++) {
+  let petScore = 0;
+  let pets = 0;
+  let mounts = 0;
+  let toys = 0;
+  let achievementPoints = 0;
+  let reputations = 0;
+  let titles = 0;
+  let questsCompleted = 0;
+  let honorableKills = 0;
+  let honorLvl = 0;
+
   region = characters[charIndex].region.toLowerCase();
   realm = characters[charIndex].realm.toLowerCase().split(" ").join("-").split("'").join("");
   name = characters[charIndex].name.toLowerCase();
@@ -59,11 +66,39 @@ for (let charIndex = 0; charIndex < characters.length; charIndex++) {
   if (toyData !== undefined) {
     toys = toyData.toys.length;
   }
+  const characterData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}?namespace=profile-${region}`, accessToken.access_token);
+  if (characterData !== undefined) {
+    achievementPoints = characterData.achievement_points;
+  }
+  const reputationData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/reputations?namespace=profile-${region}`, accessToken.access_token);
+  if (reputationData !== undefined) {
+    reputationData.reputations.forEach((rep) => {
+      if (rep.standing.max === 0) {
+        reputations++;
+      }
+    });
+  }
+  const titlesData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/titles?namespace=profile-${region}`, accessToken.access_token);
+  if (titlesData !== undefined) {
+    titlesData.titles.forEach((rep) => {
+      titles++;
+    });
+  }
+  const questsCompletedData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/quests/completed?namespace=profile-${region}`, accessToken.access_token);
+  if (questsCompletedData !== undefined) {
+    questsCompletedData.quests.forEach((rep) => {
+      questsCompleted++;
+    });
+  }const pvpData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/pvp-summary?namespace=profile-${region}`, accessToken.access_token);
+  if (pvpData !== undefined) {
+    honorableKills = pvpData.honorable_kills;
+    honorLvl = pvpData.honor_level;
+  }
 
   if (verifyOnly) {
-    console.log(region, realm, name, 0, 0, mounts, pets, petScore, toys, 0, 0, 0, 0, 0, 0, new Date());
+    console.log(region, realm, name, 0, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
   } else {
-    await libs.insert("test", "wow_leaderboard", region, realm, name, 0, 0, mounts, pets, petScore, 0, 0, 0, 0, 0, 0, 0, new Date());
+    await libs.insert("test", "wow_leaderboard", region, realm, name, 0, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
   }
 }
 // console.log(await libs.select("test", "wow_leaderboard"));
