@@ -95,10 +95,12 @@ for (let charIndex = 0; charIndex < characters.length; charIndex++) {
     honorLvl = pvpData.honor_level;
   }
 
+  const completetionScore = achievementPoints + mounts*100 + petScore + toys*25 + reputations*200 + titles*100 + questsCompleted*2 + honorableKills + honorLvl*100
+
   if (verifyOnly) {
-    console.log(region, realm, name, 0, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
+    console.log(region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
   } else {
-    await libs.insert("test", "wow_leaderboard", region, realm, name, 0, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
+    await libs.insert("test", "wow_leaderboard", region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
   }
 }
 // console.log(await libs.select("test", "wow_leaderboard"));
