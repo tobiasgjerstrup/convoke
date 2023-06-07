@@ -22,6 +22,7 @@ for (let charIndex = 0; charIndex < characters.length; charIndex++) {
   let questsCompleted = 0;
   let honorableKills = 0;
   let honorLvl = 0;
+  let appearances = 0;
 
   region = characters[charIndex].region.toLowerCase();
   realm = characters[charIndex].realm.toLowerCase().split(" ").join("-").split("'").join("");
@@ -82,20 +83,46 @@ for (let charIndex = 0; charIndex < characters.length; charIndex++) {
     questsCompletedData.quests.forEach((rep) => {
       questsCompleted++;
     });
-  }const pvpData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/pvp-summary?namespace=profile-${region}`, accessToken.access_token);
+  }
+  const pvpData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/pvp-summary?namespace=profile-${region}`, accessToken.access_token);
   if (pvpData !== undefined) {
     honorableKills = pvpData.honorable_kills;
     honorLvl = pvpData.honor_level;
   }
+  const achievementData = await libs.zeroAuthGet(`https://${region}.api.blizzard.com/profile/wow/character/${realm}/${name}/achievements?namespace=profile-${region}`, accessToken.access_token);
+  if (achievementData !== undefined) {
+    // console.log(achievementData.achievements)
+    achievementData.achievements.forEach((achivement) => {
+      switch (achivement.id) {
+        case 10681: // "name": "Fashionista: Head"
+        case 10682: // "name": "Fashionista: Chest"
+        case 10684: // "name": "Fashionista: Legs"
+        case 10685: // "name": "Fashionista: Feet"
+        case 10686: // "name": "Fashionista: Waist"
+        case 10687: // "name": "Fashionista: Back"
+        case 10688: // "name": "Fashionista: Wrist"
+        case 10690: // "name": "Fashionista: Tabard"
+        case 10691: // "name": "Fashionista: Shirt"
+        case 10692: // "name": "Fashionista: Shoulder"
+        case 10693: // "name": "Fashionista: Hand"
+          appearances += achivement.criteria.child_criteria[0].amount;
+          break;
+        case 10689: // "name": "Fashionista: Weapon & Off-Hand"
+          appearances += achivement.criteria.amount; // this one is different... Thanks blizz API
+          break;
+      }
+    });
+    honorableKills = pvpData.honorable_kills;
+    honorLvl = pvpData.honor_level;
+  }
 
-  const completetionScore = achievementPoints + mounts*100 + petScore + toys*25 + reputations*200 + titles*100 + questsCompleted*2 + honorableKills + honorLvl*100
+  const completetionScore = achievementPoints + mounts * 100 + petScore + toys * 25 + reputations * 200 + appearances * 2 + titles * 100 + questsCompleted * 2 + honorableKills + honorLvl * 100;
 
   if (verifyOnly) {
-    console.log(region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
+    console.log(region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, appearances, titles, questsCompleted, honorableKills, honorLvl, new Date());
   } else {
-    await libs.insert("test", "wow_leaderboard", region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, 0, titles, questsCompleted, honorableKills, honorLvl, new Date());
+    await libs.insert("production", "wow_leaderboard", region, realm, name, completetionScore, achievementPoints, mounts, pets, petScore, toys, reputations, appearances, titles, questsCompleted, honorableKills, honorLvl, new Date());
   }
 }
-// console.log(await libs.select("test", "wow_leaderboard"));
 
 libs.stopScript();
