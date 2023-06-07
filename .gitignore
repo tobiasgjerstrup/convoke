@@ -11,3 +11,6 @@ scripts/node_modules*
 scripts/output/*
 scripts/config.js
 scripts/test.js
+
+discordbot/node_modules*
+discordbot/.env
