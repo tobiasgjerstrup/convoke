@@ -1,16 +1,9 @@
 import * as libs from "./libs.js";
-import { blizzardClient } from "./config.js";
-
-const verifyOnly = false;
+import { blizzardClient, verifyOnly, characters } from "./config.js";
 
 let name = "".toLowerCase();
 let realm = "".toLowerCase().split(" ").join("-").split("'").join("");
 let region = "".toLowerCase();
-
-const characters = [
-  { name: "convoke", realm: "Quelthalas", region: "EU" },
-  { name: "Dìspy", realm: "azjolnerub", region: "EU" },
-];
 
 const accessToken = await libs.credentialAuthPost(`https://oauth.battle.net/token`, blizzardClient.client_id, blizzardClient.client_secret);
 if (accessToken === false) {
