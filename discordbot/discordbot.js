@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import { joinVoiceChannel } from "@discordjs/voice";
+import * as libs from "../scripts/libs.js";
 
 dotenv.config();
 const client = new Client({
@@ -43,12 +44,19 @@ client.on("messageCreate", async (message) => {
     }
     if (message.content.toLowerCase() === "convokeleave") {
       console.log(connection);
-      if (connection && connection._state.status !== 'destroyed') connection.destroy();
+      if (connection && connection._state.status !== "destroyed") connection.destroy();
       console.log(connection);
     }
     if (message.content.toLowerCase() === "convokefact") {
-      const convokeFactMessageID = Math.floor(Math.random() * convokeFacts.length);
-      message.channel.send(convokeFacts[convokeFactMessageID] + " [message " + convokeFactMessageID + "/" + convokeFacts.length + "]");
+      const data = await libs.select('production', 'convokefacts');
+      const convokeFactMessageID = Math.floor(Math.random() * data.length);
+      console.log(data);
+      console.log(convokeFactMessageID);
+      const convokeFactRealID = convokeFactMessageID+1
+      message.channel.send(data[convokeFactMessageID].fact + " [message " + convokeFactRealID + "/" + data.length + "]");
+    }
+    if (message.content.toLowerCase().startsWith("convokefactadd ")) {
+      await libs.insert('production', 'convokefacts', `${message.author.username}`, `${message.content.slice(15)}`);
     }
   }
 });
