@@ -49,3 +49,20 @@ client.on("messageCreate", async (message) => {
     }
   }
 });
+
+const textChannel = ['702183656357363783','714452372260388885','702183883923521696','858471638398664734']
+
+function writeMessage() {
+  const channel = textChannel[Math.floor(Math.random() * textChannel.length)];
+  const message = '<@179880396362612736> SUCKS'
+  client.channels.cache.get(channel).send(message);
+}
+
+function repeatMessage() {
+  setTimeout(()=>{
+    writeMessage()
+    repeatMessage()
+  }, 1000 * 60 * 60);
+}
+
+repeatMessage()
