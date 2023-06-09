@@ -11,6 +11,7 @@ scripts/node_modules*
 scripts/output/*
 scripts/config.js
 scripts/test.js
+scripts/youtube-to-mp3/node_modules*
 
 discordbot/node_modules*
 discordbot/.env
