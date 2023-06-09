@@ -33,6 +33,11 @@ client.on("messageCreate", async (message) => {
       message.channel.send(data[convokeFactMessageID].fact + " [message " + convokeFactRealID + "/" + data.length + "]");
     }
     if (message.content.toLowerCase().startsWith("convokefactadd ")) {
+      const fact = message.content.slice(15);
+      if (fact.includes("<@")) {
+        message.channel.send("No tagging people >:(");
+        return false;
+      }
       await libs.insert("production", "convokefacts", `${message.author.username}`, `${message.content.slice(15)}`);
     }
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
