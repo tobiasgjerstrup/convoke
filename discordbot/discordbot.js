@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
-import { joinVoiceChannel, createAudioResource, createAudioPlayer } from "@discordjs/voice";
+import { joinVoiceChannel, createAudioResource, createAudioPlayer, AudioPlayerStatus } from "@discordjs/voice";
 import * as libs from "../scripts/libs.js";
 import downloadFromYoutube from "../scripts/youtube-to-mp3/index.js";
 
@@ -13,6 +13,7 @@ client.login(process.env.DISCORD_TOKEN);
 
 let connection = "";
 const player = createAudioPlayer();
+let songs = [];
 client.on("messageCreate", async (message) => {
   if (!message?.author.bot) {
     if (message.content.toLowerCase() === "convokejoin") {
@@ -37,32 +38,27 @@ client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
       const YOUTUBE_URL = message.content.slice(12);
       const OUTPUT = "media/mp3/" + YOUTUBE_URL.split("watch?v=").pop() + ".mp3";
+      songs.push(YOUTUBE_URL);
       await downloadFromYoutube(YOUTUBE_URL, OUTPUT);
-      connection = joinVoiceChannel({
-        channelId: message.member.voice.channel.id,
-        guildId: message.guild.id,
-        adapterCreator: message.guild.voiceAdapterCreator,
-      });
-      const resource = createAudioResource(OUTPUT);
-      player.play(resource);
-      connection.subscribe(player);
+      if (songs.length === 1) {
+        connection = joinVoiceChannel({
+          channelId: message.member.voice.channel.id,
+          guildId: message.guild.id,
+          adapterCreator: message.guild.voiceAdapterCreator,
+        });
+        const resource = createAudioResource(OUTPUT);
+        player.play(resource);
+        connection.subscribe(player);
+      }
     }
   }
 });
 
-const textChannel = ['702183656357363783','714452372260388885','702183883923521696','858471638398664734']
-
-function writeMessage() {
-  const channel = textChannel[Math.floor(Math.random() * textChannel.length)];
-  const message = '<@179880396362612736> SUCKS'
-  client.channels.cache.get(channel).send(message);
-}
-
-function repeatMessage() {
-  setTimeout(()=>{
-    writeMessage()
-    repeatMessage()
-  }, 1000 * 60 * 60);
-}
-
-repeatMessage()
+player.on(AudioPlayerStatus.Idle, () => {
+  songs.splice(0, 1);
+  if (songs.length > 0) {
+    const resource = createAudioResource("media/mp3/" + songs[0].split("watch?v=").pop() + ".mp3");
+    player.play(resource);
+    connection.subscribe(player);
+  }
+});
