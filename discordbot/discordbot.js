@@ -73,12 +73,12 @@ client.on("messageCreate", async (message) => {
     }
     if (message.content.toLowerCase() === "convoke") {
       message.channel.send(`\`\`\`
-convokeplay [URL] => plays songs from a youtube
+convokeplay [URL] => adds a song to the music queue
 convokeleave => kicks the bot from the voice channel
 convokejoin => makes the bot join your current voice channel
 convokefact => tells you a user added fact
 convokefactadd [fact] => adds a fact to the database 
-convokelist => gives you a list of the current queue
+convokelist => gives you a list of the song currently in the queue
 convokeskip => skips the current song and starts the next one
 \`\`\``);
     }
