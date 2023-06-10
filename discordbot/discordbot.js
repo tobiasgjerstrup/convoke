@@ -3,6 +3,7 @@ import { Client, GatewayIntentBits } from "discord.js";
 import { joinVoiceChannel, createAudioResource, createAudioPlayer, AudioPlayerStatus } from "@discordjs/voice";
 import * as libs from "../scripts/libs.js";
 import downloadFromYoutube from "../scripts/youtube-to-mp3/index.js";
+import fs from "fs";
 
 dotenv.config();
 const client = new Client({
@@ -13,7 +14,7 @@ client.login(process.env.DISCORD_TOKEN);
 
 let connection = "";
 const player = createAudioPlayer();
-let songs = [];
+const songs = [];
 client.on("messageCreate", async (message) => {
   if (!message?.author.bot) {
     if (message.content.toLowerCase() === "convokejoin") {
@@ -44,26 +45,55 @@ client.on("messageCreate", async (message) => {
       const YOUTUBE_URL = message.content.slice(12);
       const OUTPUT = "media/mp3/" + YOUTUBE_URL.split("watch?v=").pop() + ".mp3";
       songs.push(YOUTUBE_URL);
-      await downloadFromYoutube(YOUTUBE_URL, OUTPUT);
+      if (!fs.existsSync("media/mp3/" + songs[0].split("watch?v=").pop() + ".mp3")) {
+        console.log("downloading " + YOUTUBE_URL);
+        await downloadFromYoutube(YOUTUBE_URL, OUTPUT);
+      }
       if (songs.length === 1) {
         connection = joinVoiceChannel({
           channelId: message.member.voice.channel.id,
           guildId: message.guild.id,
           adapterCreator: message.guild.voiceAdapterCreator,
         });
-        const resource = createAudioResource(OUTPUT);
-        player.play(resource);
-        connection.subscribe(player);
+        nextSong();
       }
+    }
+    if (message.content.toLowerCase() === "convokeskip") {
+      songs.splice(0, 1);
+      if (songs.length > 0) {
+        nextSong();
+      }
+    }
+    if (message.content.toLowerCase() === "convokelist") {
+      let songList = "";
+      songs.forEach((song) => {
+        songList += "\n" + song;
+      });
+      message.channel.send("```" + songList + "```");
+    }
+    if (message.content.toLowerCase() === "convoke") {
+      message.channel.send(`\`\`\`
+convokeplay [URL] => plays songs from a youtube
+convokeleave => kicks the bot from the voice channel
+convokejoin => makes the bot join your current voice channel
+convokefact => tells you a user added fact
+convokefactadd [fact] => adds a fact to the database 
+convokelist => gives you a list of the current queue
+convokeskip => skips the current song and starts the next one
+\`\`\``);
     }
   }
 });
 
+function nextSong() {
+  const resource = createAudioResource("media/mp3/" + songs[0].split("watch?v=").pop() + ".mp3");
+  player.play(resource);
+  connection.subscribe(player);
+}
+
 player.on(AudioPlayerStatus.Idle, () => {
   songs.splice(0, 1);
   if (songs.length > 0) {
-    const resource = createAudioResource("media/mp3/" + songs[0].split("watch?v=").pop() + ".mp3");
-    player.play(resource);
-    connection.subscribe(player);
+    nextSong();
   }
 });
