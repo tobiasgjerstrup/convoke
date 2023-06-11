@@ -51,7 +51,7 @@ client.on("messageCreate", async (message) => {
     const YOUTUBE_URL = message.content.slice(12);
     const OUTPUT = "media/mp3/" + YOUTUBE_URL.split("watch?v=").pop() + ".mp3";
     songs.push(YOUTUBE_URL);
-    if (!fs.existsSync("media/mp3/" + songs[songs.length-1].split("watch?v=").pop() + ".mp3")) {
+    if (!fs.existsSync(OUTPUT)) {
       console.log("downloading " + YOUTUBE_URL);
       await downloadFromYoutube(YOUTUBE_URL, OUTPUT);
     }
