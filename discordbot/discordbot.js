@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import { joinVoiceChannel, createAudioResource, createAudioPlayer, AudioPlayerStatus } from "@discordjs/voice";
 import * as libs from "../scripts/libs.js";
-import downloadFromYoutube from "../scripts/youtube-to-mp3/index.js";
+import { downloadFromYoutube, getMetaInfoFromYoutubeSearch } from "../scripts/youtube-to-mp3/index.js";
 import fs from "fs";
 
 dotenv.config();
@@ -48,20 +48,23 @@ client.on("messageCreate", async (message) => {
   if (message.content.toLowerCase().startsWith("convokeplay ")) {
     if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
 
-    const YOUTUBE_URL = message.content.slice(12);
-    const OUTPUT = "media/mp3/" + YOUTUBE_URL.split("watch?v=").pop() + ".mp3";
-    songs.push(YOUTUBE_URL);
+    const metaData = await getMetaInfoFromYoutubeSearch(message.content.slice(12));
+    const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
+    songs.push(metaData.url);
     if (!fs.existsSync(OUTPUT)) {
-      console.log("downloading " + YOUTUBE_URL);
-      await downloadFromYoutube(YOUTUBE_URL, OUTPUT);
+      console.log("downloading " + metaData.url);
+      await downloadFromYoutube(metaData.url, OUTPUT);
     }
     if (songs.length === 1) {
+      message.channel.send(`\`\`\`now playing ${metaData.title}\`\`\``)
       connection = joinVoiceChannel({
         channelId: message.member.voice.channel.id,
         guildId: message.guild.id,
         adapterCreator: message.guild.voiceAdapterCreator,
       });
       nextSong();
+    } else {
+      message.channel.send(`\`\`\`added ${metaData.title} to the queue\`\`\``)
     }
   }
   if (message.content.toLowerCase() === "convokeskip") {
@@ -79,7 +82,7 @@ client.on("messageCreate", async (message) => {
   }
   if (message.content.toLowerCase() === "convoke") {
     message.channel.send(`\`\`\`
-convokeplay [URL] => adds a song to the music queue
+convokeplay [URL] or [SEARCH] => adds a song to the music queue
 convokeleave => kicks the bot from the voice channel
 convokejoin => makes the bot join your current voice channel
 convokefact => tells you a user added fact

@@ -1,6 +1,7 @@
 const ytdl = require("ytdl-core");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffmpeg = require("fluent-ffmpeg");
+const ytsr = require("ytsr");
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function fetchVideo(url, audioFileName, maxFileSize) {
@@ -10,7 +11,7 @@ async function fetchVideo(url, audioFileName, maxFileSize) {
     const ffmpegCommand = ffmpeg(videoStream)
       .audioBitrate(128)
       .toFormat("mp3")
-      .outputOptions('-fs', maxFileSize)
+      .outputOptions("-fs", maxFileSize)
       .save(audioFileName)
       .on("end", () => {
         resolve();
@@ -33,4 +34,20 @@ async function downloadFromYoutube(YOUTUBE_URL, audioFileName, maxFileSize = 100
     });
 }
 
-module.exports = downloadFromYoutube;
+async function getMetaInfoFromYoutubeSearch(search) {
+  console.log(search);
+  const metaInfo = {}
+  try {
+    const res = await ytdl.getBasicInfo(search);
+    metaInfo.title = res.videoDetails.title;
+    metaInfo.url = res.videoDetails.video_url;
+  } catch (err) {
+    const res = await ytsr(search, {limit: 1});
+    metaInfo.title = res.items[0].title
+    metaInfo.url = res.items[0].url
+  }
+  console.log(metaInfo);
+  return metaInfo;
+}
+
+module.exports = { downloadFromYoutube, getMetaInfoFromYoutubeSearch };
