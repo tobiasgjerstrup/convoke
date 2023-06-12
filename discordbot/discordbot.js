@@ -48,7 +48,11 @@ client.on("messageCreate", async (message) => {
     }
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
-
+      // if magnus removed video
+      if (message.content.slice(12).toLowerCase() === 'magnus er gay') {
+        playSongFromFile('gn7FiHmV9O0', message);
+        return true;
+      } 
       const metaData = await getMetaInfoFromYoutubeSearch(message.content.slice(12));
       const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
       songs.push(metaData.url);
@@ -117,4 +121,22 @@ function ifMessageFromUserInVoice(message, errorMsg) {
     return false;
   }
   return true;
+}
+
+function playSongFromFile(filename, message){
+  songs.push(filename);
+  console.log(songs);
+  if (songs.length === 1) {
+    message.channel.send(`\`\`\`now playing ${filename}\`\`\``);
+    connection = joinVoiceChannel({
+      channelId: message.member.voice.channel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
+    });
+    nextSong();
+    return true;
+  } else {
+    message.channel.send(`\`\`\`added ${filename} to the queue\`\`\``);
+    return true;
+  }
 }
