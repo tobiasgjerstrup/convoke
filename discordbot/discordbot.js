@@ -4,6 +4,7 @@ import { joinVoiceChannel, createAudioResource, createAudioPlayer, AudioPlayerSt
 import * as libs from "../scripts/libs.js";
 import { downloadFromYoutube, getMetaInfoFromYoutubeSearch } from "../scripts/youtube-to-mp3/index.js";
 import fs from "fs";
+import { asciiArt } from "../scripts/config.js";
 
 dotenv.config();
 const client = new Client({
@@ -15,6 +16,7 @@ client.login(process.env.DISCORD_TOKEN);
 let connection = "";
 const player = createAudioPlayer();
 const songs = [];
+let shrekMessage = null;
 client.on("messageCreate", async (message) => {
   try {
     if (message?.author.bot) {
@@ -49,10 +51,10 @@ client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
       // if magnus removed video
-      if (message.content.slice(12).toLowerCase() === 'magnus er gay') {
-        playSongFromFile('gn7FiHmV9O0', message);
+      if (message.content.slice(12).toLowerCase() === "magnus er gay") {
+        playSongFromFile("gn7FiHmV9O0", message);
         return true;
-      } 
+      }
       const metaData = await getMetaInfoFromYoutubeSearch(message.content.slice(12));
       const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
       songs.push(metaData.url);
@@ -96,6 +98,15 @@ convokelist => gives you a list of the song currently in the queue
 convokeskip => skips the current song and starts the next one
 \`\`\``);
     }
+    if (message.content.toLowerCase().startsWith("dispy")) {
+      shrekMessage = await message.channel.send(asciiArt.shrek);
+    }
+    if (message.content.toLowerCase().startsWith("uwu")) {
+      if (shrekMessage === null) return false;
+      await shrekMessage.edit(asciiArt.shrek2);
+      await delay(200);
+      await shrekMessage.edit(asciiArt.shrek);
+    }
   } catch (err) {
     console.log("failed handling message from user");
     console.error(err);
@@ -123,7 +134,7 @@ function ifMessageFromUserInVoice(message, errorMsg) {
   return true;
 }
 
-function playSongFromFile(filename, message){
+function playSongFromFile(filename, message) {
   songs.push(filename);
   console.log(songs);
   if (songs.length === 1) {
@@ -140,3 +151,5 @@ function playSongFromFile(filename, message){
     return true;
   }
 }
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
