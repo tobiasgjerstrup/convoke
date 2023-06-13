@@ -46,7 +46,10 @@ client.on("messageCreate", async (message) => {
         message.channel.send("No tagging people >:(");
         return false;
       }
-      await libs.insert("production", "convokefacts", `${message.author.username}`, `${message.content.slice(15)}`);
+      const convokefactaddRes = await libs.insert("production", "convokefacts", `${message.author.username}`, `${message.content.slice(15)}`);
+      if (convokefactaddRes === true) {
+        message.channel.send("message added");
+      }
     }
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
@@ -110,6 +113,7 @@ convokeskip => skips the current song and starts the next one
   } catch (err) {
     console.log("failed handling message from user");
     console.error(err);
+    message.channel.send("something went wrong");
   }
 });
 
