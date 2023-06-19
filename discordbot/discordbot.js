@@ -110,6 +110,43 @@ convokeskip => skips the current song and starts the next one
       await delay(200);
       await shrekMessage.edit(asciiArt.shrek);
     }
+    if (message.content.toLowerCase() === "mc mined blocks") {
+      let mcLeaderboard = "Mined Blocks:";
+      const players = await libs.select("production", "mc_players");
+      const mcWorldDir = "../../minecraft-server/world-1.20/stats/";
+      let index = 0;
+      fs.readdir(mcWorldDir, async (err, files) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        files.forEach(async (file) => {
+          await fs.readFile(mcWorldDir + file, "utf8", (err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            let playername = "unknown";
+            Object.keys(players).forEach(function (player) {
+              if (players[player].uuid === file.slice(0, -5)) {
+                playername = players[player].name;
+              }
+            });
+            let blocksMined = 0;
+
+            const stats = JSON.parse(data).stats["minecraft:mined"];
+            Object.keys(stats).forEach(function (stat) {
+              blocksMined += stats[stat];
+            });
+            index++;
+            mcLeaderboard += `\`\`\`${playername}: ${blocksMined}\`\`\``;
+            if (files.length <= index) {
+              message.channel.send(mcLeaderboard);
+            }
+          });
+        });
+      });
+    }
   } catch (err) {
     console.log("failed handling message from user");
     console.error(err);
