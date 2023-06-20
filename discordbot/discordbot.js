@@ -133,17 +133,18 @@ convokeskip => skips the current song and starts the next one
               }
             });
             let blocksMined = 0;
-
-            const stats = JSON.parse(data).stats["minecraft:mined"];
-            if (stats !== undefined) {
+            index++;
+            if (undefined !== JSON.parse(data).stats["minecraft:mined"]) {
+              const stats = JSON.parse(data).stats["minecraft:mined"];
+              console.log(file);
               Object.keys(stats).forEach(function (stat) {
                 blocksMined += stats[stat];
               });
-              index++;
               mcLeaderboard += `\`\`\`${playername}: ${blocksMined}\`\`\``;
-              if (files.length <= index) {
-                message.channel.send(mcLeaderboard);
-              }
+            }
+
+            if (files.length <= index) {
+              message.channel.send(mcLeaderboard);
             }
           });
         });
