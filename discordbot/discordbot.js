@@ -135,8 +135,10 @@ convokeskip => skips the current song and starts the next one
             let blocksMined = 0;
 
             const stats = JSON.parse(data).stats["minecraft:mined"];
-            if (stats === undefined)
+            if (stats === undefined) {
+              console.log("was unable to access mined stat in " + file);
               return false;
+            }
             Object.keys(stats).forEach(function (stat) {
               blocksMined += stats[stat];
             });
