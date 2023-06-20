@@ -135,17 +135,15 @@ convokeskip => skips the current song and starts the next one
             let blocksMined = 0;
 
             const stats = JSON.parse(data).stats["minecraft:mined"];
-            if (stats === undefined) {
-              console.log("was unable to access mined stat in " + file);
-              return false;
-            }
-            Object.keys(stats).forEach(function (stat) {
-              blocksMined += stats[stat];
-            });
-            index++;
-            mcLeaderboard += `\`\`\`${playername}: ${blocksMined}\`\`\``;
-            if (files.length <= index) {
-              message.channel.send(mcLeaderboard);
+            if (stats !== undefined) {
+              Object.keys(stats).forEach(function (stat) {
+                blocksMined += stats[stat];
+              });
+              index++;
+              mcLeaderboard += `\`\`\`${playername}: ${blocksMined}\`\`\``;
+              if (files.length <= index) {
+                message.channel.send(mcLeaderboard);
+              }
             }
           });
         });
