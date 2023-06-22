@@ -62,3 +62,8 @@ export async function compareHashWithValue(value, hash) {
   const result = await bcrypt.compare(hash, value);
   return result;
 }
+
+export async function getMinecraftPlayers(){
+  const data = await libs.select("production", "mc_players");
+  return data;
+}

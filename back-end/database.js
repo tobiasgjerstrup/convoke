@@ -40,6 +40,12 @@ app.get("/api/v1/git", async (req, res) => {
   res.send({ data });
 });
 
+app.get("/api/v1/minecraft/players", async (req, res) => {
+  const data = await sys.getMinecraftPlayers(req.query);
+  console.log("minecraft players");
+  res.send({ data: data });
+});
+
 // under here is testing stuff
 app.get("/api/v1", (req, res) => {
   res.send({ user: req.session.user });
