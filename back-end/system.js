@@ -64,6 +64,6 @@ export async function compareHashWithValue(value, hash) {
 }
 
 export async function getMinecraftPlayers(){
-  const data = await libs.select("production", "mc_players");
+  const data = await libs.select("production", "mc_players", ' ORDER BY blocks_mined DESC');
   return data;
 }

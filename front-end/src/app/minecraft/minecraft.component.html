@@ -1,0 +1,28 @@
+<div class="menu-items">
+  <table style="width:100%">
+    <!-- <ng-component *ngFor="let player of players"> -->
+    <tr>
+      <th>id</th>
+      <th>name</th>
+      <th>blocks_mined</th>
+      <th>mobs_killed</th>
+      <th>items_broken</th>
+      <th>items_dropped</th>
+      <th>items_picked_up</th>
+      <th>items_used</th>
+      <th>items_crafted</th>
+    </tr>
+    <tr *ngFor="let player of players">
+      <td>{{ player.id }}</td>
+      <td>{{ player.name }}</td>
+      <td>{{ player.blocks_mined }}</td>
+      <td>{{ player.mobs_killed }}</td>
+      <td>{{ player.items_broken }}</td>
+      <td>{{ player.items_dropped }}</td>
+      <td>{{ player.items_picked_up }}</td>
+      <td>{{ player.items_used }}</td>
+      <td>{{ player.items_crafted }}</td>
+    </tr>
+    <!-- </ng-component> -->
+  </table>
+</div>

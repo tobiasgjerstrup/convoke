@@ -2,10 +2,12 @@
   <span>{{ user }}</span>
 </div>
 
-<label>username:</label><input (keyup)="updateField('user', $event)" />
-<label>password:</label><input (keyup)="updateField('pass', $event)" type="password" />
-<button (click)="login()">Login!</button>
-<button (click)="register()">Register!</button>
+<div *ngIf="!user">
+  <label>username:</label><input (keyup)="updateField('user', $event)" />
+  <label>password:</label><input (keyup)="updateField('pass', $event)" type="password" />
+  <button (click)="login()">Login!</button>
+  <button (click)="register()">Register!</button>
+</div>
 <router-outlet></router-outlet>
 
 <app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
