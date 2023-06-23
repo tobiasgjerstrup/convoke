@@ -1,5 +1,6 @@
 import * as libs from "../scripts/libs.js";
 import * as bcrypt from "bcrypt";
+import fs from 'fs/promises'
 
 export async function getItems(args) {
   let search = "";
@@ -65,5 +66,11 @@ export async function compareHashWithValue(value, hash) {
 
 export async function getMinecraftPlayers(){
   const data = await libs.select("production", "mc_players", ' ORDER BY blocks_mined DESC');
+  return data;
+}
+
+export async function getMinecraftChatlog(){
+  const data = await fs.readFile("../../minecraft-server/MC1-20.log", 'utf8');
+  console.log(data)
   return data;
 }

@@ -46,6 +46,11 @@ app.get("/api/v1/minecraft/players", async (req, res) => {
   res.send({ data: data });
 });
 
+app.get("/api/v1/minecraft/chatlog", async (req, res) => {
+  const data = await sys.getMinecraftChatlog(req.query);
+  console.log("minecraft chatlog");
+  res.send({ data: data });
+});
 // under here is testing stuff
 app.get("/api/v1", (req, res) => {
   res.send({ user: req.session.user });

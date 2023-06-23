@@ -22,6 +22,7 @@ export class MinecraftComponent {
       items_crafted: '',
     },
   ];
+  chatlog = 'test';
   apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient, public toastService: ToastService) {}
@@ -33,6 +34,12 @@ export class MinecraftComponent {
       });
 
       console.log(this.players);
+    });
+
+    this.http.get<any>(this.apiUrl + 'api/v1/minecraft/chatlog?').subscribe((res) => {
+      console.log(this.chatlog);
+      this.chatlog = res.data
+      console.log(this.chatlog);
     });
   }
 }
