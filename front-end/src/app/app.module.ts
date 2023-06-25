@@ -11,6 +11,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { GitHistoryComponent } from './git-history/git-history.component';
 import { LoginComponent } from './login/login.component';
 import { MinecraftComponent } from './minecraft/minecraft.component';
+import { WowResourcesComponent } from './wow-resources/wow-resources.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MinecraftComponent } from './minecraft/minecraft.component';
     WowComponent,
     GitHistoryComponent,
     LoginComponent,
-    MinecraftComponent
+    MinecraftComponent,
+    WowResourcesComponent
     ],
   imports: [
     BrowserModule,

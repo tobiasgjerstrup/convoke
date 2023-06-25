@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { WowComponent } from './wow/wow.component';
 import { LoginComponent } from './login/login.component';
 import { MinecraftComponent } from './minecraft/minecraft.component';
+import { WowResourcesComponent } from './wow-resources/wow-resources.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'wow', component: WowComponent },
   { path: 'git', component: GitHistoryComponent },
   { path: 'minecraft', component: MinecraftComponent },
+  { path: 'wow-resources', component: WowResourcesComponent },
   { path: '',   redirectTo: '/home', pathMatch: 'full' },
 ];
 
