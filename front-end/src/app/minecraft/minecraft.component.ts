@@ -15,6 +15,7 @@ export class MinecraftComponent {
       name: '',
       blocks_mined: '',
       mobs_killed: '',
+      time_played: '',
       items_broken: '',
       items_dropped: '',
       items_picked_up: '',
@@ -29,17 +30,17 @@ export class MinecraftComponent {
 
   ngOnInit() {
     this.http.get<any>(this.apiUrl + 'api/v1/minecraft/players?').subscribe((players) => {
-      players.data.forEach((player: ConcatArray<{ id: string; name: string; blocks_mined: string; mobs_killed: string; items_broken: string; items_dropped: string; items_picked_up: string; items_used: string; items_crafted: string }>) => {
+      players.data.forEach((player: ConcatArray<{ id: string; name: string; blocks_mined: string; mobs_killed: string; time_played: string; items_broken: string; items_dropped: string; items_picked_up: string; items_used: string; items_crafted: string }>) => {
         this.players = this.players.concat(player);
       });
 
       console.log(this.players);
     });
 
-    this.http.get<any>(this.apiUrl + 'api/v1/minecraft/chatlog?').subscribe((res) => {
+    /* this.http.get<any>(this.apiUrl + 'api/v1/minecraft/chatlog?').subscribe((res) => {
       console.log(this.chatlog);
       this.chatlog = res.data
       console.log(this.chatlog);
-    });
+    }); */
   }
 }
