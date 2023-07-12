@@ -17,6 +17,7 @@ let connection = "";
 const player = createAudioPlayer();
 const songs = [];
 let shrekMessage = null;
+let downloadMessage = null;
 client.on("messageCreate", async (message) => {
   try {
     if (message?.author.bot) {
@@ -62,11 +63,16 @@ client.on("messageCreate", async (message) => {
       const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
       songs.push(metaData.url);
       if (!fs.existsSync(OUTPUT)) {
+        downloadMessage = await message.channel.send(`\`\`\`downloading ` + metaData.url + `\`\`\``);
         console.log("downloading " + metaData.url);
         await downloadFromYoutube(metaData.url, OUTPUT);
       }
       if (songs.length === 1) {
-        message.channel.send(`\`\`\`now playing ${metaData.title}\`\`\``);
+        if (downloadMessage !== null) {
+          downloadMessage.edit(`\`\`\`now playing ${metaData.title}\`\`\``);
+        } else {
+          message.channel.send(`\`\`\`now playing ${metaData.title}\`\`\``);
+        }
         connection = joinVoiceChannel({
           channelId: message.member.voice.channel.id,
           guildId: message.guild.id,
