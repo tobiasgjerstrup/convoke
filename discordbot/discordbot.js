@@ -32,7 +32,7 @@ client.on("messageCreate", async (message) => {
         adapterCreator: message.guild.voiceAdapterCreator,
       });
     }
-    if (message.content.toLowerCase() === "convokeleave") {
+    if (message.content.toLowerCase() === "convokeleave" || message.content.toLowerCase() === "cocksleeve") {
       if (connection && connection._state.status !== "destroyed") connection.destroy();
     }
     if (message.content.toLowerCase() === "convokefact") {
@@ -44,7 +44,7 @@ client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase().startsWith("convokefactadd ")) {
       const fact = message.content.slice(15);
       if (fact.includes("<@")) {
-        message.channel.send("No tagging people >:(");
+        message.channel.send("No tagging people >:( grrrrr!!!");
         return false;
       }
       const convokefactaddRes = await libs.insert("production", "convokefacts", `${message.author.username}`, `${message.content.slice(15)}`);
