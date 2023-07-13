@@ -23,6 +23,8 @@ client.on("messageCreate", async (message) => {
     if (message?.author.bot) {
       return false;
     }
+    await libs.logError("Failed to execute command", 500, { UserID: message.author.id, AdditionalInformation: message.content });
+    await libs.logMessage("User send message", 200, { UserID: message.author.id, AdditionalInformation: message.content });
     if (message.content.toLowerCase() === "convokejoin") {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
 
@@ -96,17 +98,17 @@ client.on("messageCreate", async (message) => {
       });
       message.channel.send("```" + songList + "```");
     }
-    if (message.content.toLowerCase() === "convoke") {
+    /*  if (message.content.toLowerCase() === "convoke") {
       message.channel.send(`\`\`\`
-convokeplay [URL] or [SEARCH] => adds a song to the music queue
-convokeleave => kicks the bot from the voice channel
-convokejoin => makes the bot join your current voice channel
-convokefact => tells you a user added fact
-convokefactadd [fact] => adds a fact to the database 
-convokelist => gives you a list of the song currently in the queue
-convokeskip => skips the current song and starts the next one
-\`\`\``);
-    }
+      convokeplay [URL] or [SEARCH] => adds a song to the music queue
+      convokeleave => kicks the bot from the voice channel
+      convokejoin => makes the bot join your current voice channel
+      convokefact => tells you a user added fact
+      convokefactadd [fact] => adds a fact to the database 
+      convokelist => gives you a list of the song currently in the queue
+      convokeskip => skips the current song and starts the next one
+      \`\`\``);
+    } */
     if (message.content.toLowerCase().startsWith("dispy")) {
       shrekMessage = await message.channel.send(asciiArt.shrek);
     }
@@ -157,6 +159,7 @@ convokeskip => skips the current song and starts the next one
       });
     }
   } catch (err) {
+    await libs.logError("Failed to execute command", 500, { UserID: message.author.id, AdditionalInformation: message.content });
     console.log("failed handling message from user");
     console.error(err);
     message.channel.send("something went wrong");

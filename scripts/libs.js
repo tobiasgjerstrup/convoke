@@ -1,11 +1,12 @@
 import axios from "axios";
 import fs from "fs";
-import { databaseTest, databaseProduction } from "./config.js";
+import { databaseTest, databaseProduction, databaseLogs } from "./config.js";
 import mysql from "mysql2";
 import convert from "xml-js";
 
 const connection = mysql.createConnection(databaseProduction).promise();
 const connectionTest = mysql.createConnection(databaseTest).promise();
+const connectionLogs = mysql.createConnection(databaseLogs).promise();
 
 export function sleep(ms) {
   return new Promise((resolve) => {
@@ -44,6 +45,9 @@ export async function insert(db, table, ...args) {
       break;
     case "production":
       await connection.query(`insert into ${table} VALUES (?)`, [arguements]);
+      break;
+    case "logs":
+      await connectionLogs.query(`insert into ${table} VALUES (?)`, [arguements]);
       break;
     default:
       console.log("no valid db selected");
@@ -100,7 +104,7 @@ export async function delete_(db, table, coloumn, value) {
   return true;
 }
 
-export async function clearTable(db, table, condition = '') {
+export async function clearTable(db, table, condition = "") {
   switch (db) {
     case "test":
       await connectionTest.query(`DELETE FROM ${table} ${condition}`);
@@ -204,9 +208,52 @@ export async function credentialAuthPost(URL, USERNAME, PASSWORD) {
     },
   });
   if (response.status !== 200) {
-    console.log(response.data)
+    console.log(response.data);
     console.error("call " + URL + " failed with status code " + response.status);
     return false;
   }
   return response.data;
+}
+
+async function insertLog(keys, values) {
+  await connectionLogs.query(`insert into log (${keys}) VALUES (${values})`);
+}
+
+export async function logMessage(message, errorCode, args = null) {
+  let insertObject = {};
+  if (args !== null) {
+    insertObject = Object.assign({}, { LogTimestamp: new Date().toISOString().slice(0, 19).replace("T", " "), LogMessage: message, ErrorCode: errorCode }, args);
+  } else {
+    insertObject = { LogTimestamp: new Date().toISOString().slice(0, 19).replace("T", " "), LogMessage: message, ErrorCode: errorCode };
+  }
+  let keys = ``;
+  let values = ``;
+  for (const [key, value] of Object.entries(insertObject)) {
+    keys += `\`${key}\`,`;
+    values += `'${value}',`;
+  }
+  keys = keys.slice(0, -1);
+  values = values.slice(0, -1);
+  await insertLog(keys, values);
+}
+
+export async function logError(message, errorCode, args = null) {
+  let insertObject = {};
+  if (args !== null) {
+    insertObject = Object.assign({}, { LogTimestamp: new Date().toISOString().slice(0, 19).replace("T", " "), LogMessage: message, ErrorCode: errorCode }, args);
+  } else {
+    insertObject = { LogTimestamp: new Date().toISOString().slice(0, 19).replace("T", " "), LogMessage: message, ErrorCode: errorCode };
+  }
+  if (insertObject.ErrorMessage === undefined) {
+    insertObject.ErrorMessage = message;
+  }
+  let keys = ``;
+  let values = ``;
+  for (const [key, value] of Object.entries(insertObject)) {
+    keys += `\`${key}\`,`;
+    values += `'${value}',`;
+  }
+  keys = keys.slice(0, -1);
+  values = values.slice(0, -1);
+  await insertLog(keys, values);
 }
