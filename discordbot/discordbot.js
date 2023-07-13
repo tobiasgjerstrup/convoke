@@ -23,7 +23,6 @@ client.on("messageCreate", async (message) => {
     if (message?.author.bot) {
       return false;
     }
-    await libs.logError("Failed to execute command", 500, { UserID: message.author.id, AdditionalInformation: message.content });
     await libs.logMessage("User send message", 200, { UserID: message.author.id, AdditionalInformation: message.content });
     if (message.content.toLowerCase() === "convokejoin") {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
