@@ -12,6 +12,7 @@ import { GitHistoryComponent } from './git-history/git-history.component';
 import { LoginComponent } from './login/login.component';
 import { MinecraftComponent } from './minecraft/minecraft.component';
 import { WowResourcesComponent } from './wow-resources/wow-resources.component';
+import { DiscordComponent } from './discord/discord.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { WowResourcesComponent } from './wow-resources/wow-resources.component';
     GitHistoryComponent,
     LoginComponent,
     MinecraftComponent,
-    WowResourcesComponent
+    WowResourcesComponent,
+    DiscordComponent
     ],
   imports: [
     BrowserModule,

@@ -56,6 +56,34 @@ export async function insert(db, table, ...args) {
   return true;
 }
 
+export async function insertv2(db, table, insertObject) {
+  let keys = "";
+  let values = "";
+
+  for (const [key, value] of Object.entries(insertObject)) {
+    keys += `\`${key}\`,`;
+    values += `'${value}',`;
+  }
+
+  keys = keys.slice(0, -1);
+  values = values.slice(0, -1);
+  switch (db) {
+    case "test":
+      await connectionTest.query(`insert into ${table} (${keys}) VALUES (${values})`);
+      break;
+    case "production":
+      await connection.query(`insert into ${table} (${keys}) VALUES (${values})`);
+      break;
+    case "logs":
+      await connectionLogs.query(`insert into ${table} (${keys}) VALUES (${values})`);
+      break;
+    default:
+      console.log("no valid db selected");
+      break;
+  }
+  return true;
+}
+
 export async function select(db, table, ...args) {
   let response;
   console.log(`select * from ${table} ${args}`);

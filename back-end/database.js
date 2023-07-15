@@ -22,6 +22,12 @@ app.use(
   })
 );
 
+app.get("/api/v1/discordbot/playlists", async (req, res) => {
+  const data = await sys.getDiscordbotPlaylists(req.query);
+  console.log("discordbot playlists");
+  res.send({ data: data });
+});
+
 app.get("/api/v1/items", async (req, res) => {
   const data = await sys.getItems(req.query);
   console.log("items");
@@ -118,13 +124,30 @@ app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, r
 });
 
 app.post("/api/v1/logout", (req, res) => {
-
   if (req.session.user !== undefined) {
-    delete req.session.user
+    delete req.session.user;
     res.send({ statuscode: 200, message: "Logged out!" });
   } else {
     res.send({ statuscode: 200, message: "Already logged out!" });
   }
+});
+
+app.post("/api/v1/discordbot/playlist/post", (req, res) => {
+  if (req.session.user === undefined) {
+    res.send({ statuscode: 401, message: "Not Logged in" });
+    return;
+  }
+  if (!sys.getUserPermissions(req.session.user)) {
+    res.send({ statuscode: 401, message: "Not Authorized" });
+    return;
+  }
+
+  if (!req.body.playlist || !req.body.song) {
+    res.send({ statuscode: 200, message: "Missing Body" });
+    return;
+  }
+  const response = sys.insertDiscordbotPlaylists(req.body);
+  res.send({ statuscode: 200, message: response });
 });
 
 app.listen(8080);

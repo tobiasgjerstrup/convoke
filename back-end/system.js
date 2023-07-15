@@ -1,6 +1,6 @@
 import * as libs from "../scripts/libs.js";
 import * as bcrypt from "bcrypt";
-import fs from 'fs/promises'
+import fs from "fs/promises";
 
 export async function getItems(args) {
   let search = "";
@@ -64,13 +64,38 @@ export async function compareHashWithValue(value, hash) {
   return result;
 }
 
-export async function getMinecraftPlayers(){
-  const data = await libs.select("production", "mc_players", ' ORDER BY blocks_mined DESC');
+export async function getMinecraftPlayers() {
+  const data = await libs.select("production", "mc_players", " ORDER BY blocks_mined DESC");
   return data;
 }
 
-export async function getMinecraftChatlog(){
-  const data = await fs.readFile("../../minecraft-server/MC1-20.log", 'utf8');
-  console.log(data)
+export async function getMinecraftChatlog() {
+  const data = await fs.readFile("../../minecraft-server/MC1-20.log", "utf8");
+  console.log(data);
   return data;
+}
+
+export async function getDiscordbotPlaylists() {
+  const res = await libs.select("production", "playlists", " ORDER BY playlistName");
+  const playlists = {};
+  res.forEach((entry) => {
+    if (!playlists[entry.playlistName]) playlists[entry.playlistName] = [];
+    playlists[entry.playlistName].push(entry.song);
+  });
+  console.log(playlists);
+  return playlists;
+}
+
+export async function insertDiscordbotPlaylists(data) {
+  const res = await libs.insertv2("production", "playlists", { playlistName: data.playlist, song: data.song });
+  return res;
+}
+
+export async function getUserPermissions(username) {
+  const res = await libs.select("production", "users", ` WHERE username = ${username}`);
+  if (res.data) {
+    return true;
+  } else {
+    return false;
+  }
 }
