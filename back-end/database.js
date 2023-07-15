@@ -78,7 +78,7 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
 
   const hashedPassword = await sys.hashValue(req.body.pass);
 
-  await libs.insert("production", "users", req.body.user, hashedPassword);
+  await libs.insertv2("production", "users", {username: req.body.user, password: hashedPassword});
   res.status(200);
   res.send({ statuscode: 200, message: "😎user created" });
 });
