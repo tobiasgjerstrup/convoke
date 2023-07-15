@@ -55,7 +55,7 @@ client.on("messageCreate", async (message) => {
     }
     if (message.content.toLowerCase().startsWith("convokeplay ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
-      // if magnus removed video
+      // magnus removed video
       if (message.content.slice(12).toLowerCase() === "magnus er gay") {
         playSongFromFile("gn7FiHmV9O0", message);
         return true;
@@ -157,9 +157,8 @@ client.on("messageCreate", async (message) => {
         });
       });
     }
-    if (message.content.toLowerCase().startsWith("convokeradio")) {
+    if (message.content.toLowerCase() === "convokeradio") {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
-      // if magnus removed video
       fs.readdir("media/mp3/", async (err, files) => {
         if (err) {
           console.error(err);
@@ -168,6 +167,16 @@ client.on("messageCreate", async (message) => {
         const randomSongFile = files[Math.floor(Math.random() * files.length)];
         playSongFromFile(randomSongFile.slice(0, -4), message);
       });
+    }
+
+    if (message.content.toLowerCase().startsWith("convokeplaylist ")) {
+      if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
+      // if magnus removed video
+      const data = await libs.select("production", "playlists", ` WHERE playlistname = '${message.content.toLowerCase().slice(16)}'`);
+
+      for (let i = 0; i < data.length; i++) {
+        await convokeplaylist(message, data[i].song);
+      }
     }
   } catch (err) {
     await libs.logError("Failed to execute command", 500, { UserID: message.author.id, AdditionalInformation: message.content });
@@ -213,6 +222,24 @@ function playSongFromFile(filename, message) {
   } else {
     message.channel.send(`\`\`\`added ${filename} to the queue\`\`\``);
     return true;
+  }
+}
+
+async function convokeplaylist(message, song) {
+  const metaData = await getMetaInfoFromYoutubeSearch(song);
+  const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
+  songs.push(metaData.url);
+  if (!fs.existsSync(OUTPUT)) {
+    console.log("downloading " + metaData.url);
+    await downloadFromYoutube(metaData.url, OUTPUT);
+  }
+  if (songs.length === 1) {
+    connection = joinVoiceChannel({
+      channelId: message.member.voice.channel.id,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator,
+    });
+    nextSong();
   }
 }
 
