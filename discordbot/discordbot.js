@@ -157,6 +157,18 @@ client.on("messageCreate", async (message) => {
         });
       });
     }
+    if (message.content.toLowerCase().startsWith("convokeradio")) {
+      if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
+      // if magnus removed video
+      fs.readdir("media/mp3/", async (err, files) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        const randomSongFile = files[Math.floor(Math.random() * files.length)];
+        playSongFromFile(randomSongFile.slice(0, -4), message);
+      });
+    }
   } catch (err) {
     await libs.logError("Failed to execute command", 500, { UserID: message.author.id, AdditionalInformation: message.content });
     console.log("failed handling message from user");
