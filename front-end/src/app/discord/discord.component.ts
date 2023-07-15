@@ -59,4 +59,13 @@ export class DiscordComponent {
   ngOnDestroy(): void {
     this.toastService.clear();
   }
+
+  removeSong() {
+    if (this.playlistUpdate.playlist && this.playlistUpdate.song) {
+      this.http.post<any>(this.apiUrl + 'api/v1/discordbot/playlist/delete', this.playlistUpdate).subscribe((data) => {
+        this.showToast(data.statuscode, data.message);
+        this.updatePlaylists();
+      });
+    }
+  }
 }

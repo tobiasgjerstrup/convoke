@@ -78,7 +78,7 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
 
   const hashedPassword = await sys.hashValue(req.body.pass);
 
-  await libs.insertv2("production", "users", {username: req.body.user, password: hashedPassword});
+  await libs.insertv2("production", "users", { username: req.body.user, password: hashedPassword });
   res.status(200);
   res.send({ statuscode: 200, message: "😎user created" });
 });
@@ -147,6 +147,24 @@ app.post("/api/v1/discordbot/playlist/post", async (req, res) => {
     return;
   }
   const response = sys.insertDiscordbotPlaylists(req.body);
+  res.send({ statuscode: 200, message: response });
+});
+
+app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
+  /* if (req.session.user === undefined) {
+    res.send({ statuscode: 401, message: "Not Logged in" });
+    return;
+  }
+  if ((await sys.getUserPermissions(req.session.user)) === false) {
+    res.send({ statuscode: 401, message: "Not Authorized" });
+    return;
+  }
+
+  if (!req.body.playlist || !req.body.song) {
+    res.send({ statuscode: 200, message: "Missing Body" });
+    return;
+  } */
+  const response = sys.deleteDiscordbotPlaylists(req.body);
   res.send({ statuscode: 200, message: response });
 });
 

@@ -91,6 +91,11 @@ export async function insertDiscordbotPlaylists(data) {
   return res;
 }
 
+export async function deleteDiscordbotPlaylists(data) {
+  const res = await libs.deletev2("production", "playlists", { playlistName: data.playlist, song: data.song });
+  return res;
+}
+
 export async function getUserPermissions(username) {
   if (!username) {
     return false;

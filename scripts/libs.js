@@ -285,3 +285,29 @@ export async function logError(message, errorCode, args = null) {
   values = values.slice(0, -1);
   await insertLog(keys, values);
 }
+
+export async function deletev2(db, table, insertObject) {
+  
+  let condition = ''
+
+  for (const [key, value] of Object.entries(insertObject)) {
+    condition += `\`${key}\``;
+    condition += ` = '${value}' AND `;
+  }
+  condition = condition.slice(0, -5);
+  switch (db) {
+    case "test":
+      await connectionTest.query(`DELETE FROM ${table} WHERE ${condition}`);
+      break;
+    case "production":
+      await connection.query(`DELETE FROM ${table} WHERE ${condition}`);
+      break;
+    case "logs":
+      await connectionLogs.query(`DELETE FROM ${table} WHERE ${condition}`);
+      break;
+    default:
+      console.log("no valid db selected");
+      break;
+  }
+  return true;
+}

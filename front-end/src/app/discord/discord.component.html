@@ -1,7 +1,10 @@
 <h2>add song to playlist</h2>
 
 <label>playlist:</label><input (keyup)="updateField('playlist', $event)" /> <label>song:</label><input (keyup)="updateField('song', $event)" />
+<button (click)="removeSong()">remove</button>
 <div *ngFor="let item of playlists | keyvalue">
-  <span>{{ item.key }} </span>
-  <span *ngFor="let song of item.value | keyvalue"> {{ song.value }} </span>
+  <div>
+    <h2>{{ item.key }}</h2>
+    <span *ngFor="let song of item.value | keyvalue"> {{ song.value }} </span>
+  </div>
 </div>
