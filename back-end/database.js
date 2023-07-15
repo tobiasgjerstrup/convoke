@@ -132,12 +132,12 @@ app.post("/api/v1/logout", (req, res) => {
   }
 });
 
-app.post("/api/v1/discordbot/playlist/post", (req, res) => {
+app.post("/api/v1/discordbot/playlist/post", async (req, res) => {
   if (req.session.user === undefined) {
     res.send({ statuscode: 401, message: "Not Logged in" });
     return;
   }
-  if (!sys.getUserPermissions(req.session.user)) {
+  if ((await sys.getUserPermissions(req.session.user)) === false) {
     res.send({ statuscode: 401, message: "Not Authorized" });
     return;
   }
@@ -148,6 +148,15 @@ app.post("/api/v1/discordbot/playlist/post", (req, res) => {
   }
   const response = sys.insertDiscordbotPlaylists(req.body);
   res.send({ statuscode: 200, message: response });
+});
+
+app.get("/api/v1/test", async (req, res) => {
+  if ((await sys.getUserPermissions(req.session.user)) === true) {
+    console.log("true");
+  } else {
+    console.log("false");
+  }
+  res.send({ statuscode: 200, message: "yes" });
 });
 
 app.listen(8080);

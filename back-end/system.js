@@ -92,8 +92,11 @@ export async function insertDiscordbotPlaylists(data) {
 }
 
 export async function getUserPermissions(username) {
-  const res = await libs.select("production", "users", ` WHERE username = ${username}`);
-  if (res.data) {
+  if (!username) {
+    return false;
+  }
+  const res = await libs.select("production", "users", ` WHERE username = '${username}'`);
+  if (res[0].username == username && res[0].permissions > 10) {
     return true;
   } else {
     return false;
