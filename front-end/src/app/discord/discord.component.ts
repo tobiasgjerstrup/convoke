@@ -33,7 +33,7 @@ export class DiscordComponent {
     if (event.key === 'Enter') {
       if (this.playlistUpdate.playlist && this.playlistUpdate.song) {
         this.http.post<any>(this.apiUrl + 'api/v1/discordbot/playlist/post', this.playlistUpdate).subscribe((data) => {
-          console.log(data);
+          this.showToast(data.statuscode, data.message);
           this.updatePlaylists();
         });
       }
@@ -41,5 +41,22 @@ export class DiscordComponent {
       if (value === 'playlist') this.playlistUpdate.playlist = event.target.value;
       else this.playlistUpdate.song = event.target.value;
     }
+  }
+
+  showToast(statuscode: string, message: string) {
+    if (statuscode == '200') this.showSuccess(message);
+    else this.showDanger(message);
+  }
+
+  showSuccess(message: string) {
+    this.toastService.show(message, { classname: 'bg-success text-light', delay: 5000 });
+  }
+
+  showDanger(message: string) {
+    this.toastService.show(message, { classname: 'bg-danger text-light', delay: 5000 });
+  }
+
+  ngOnDestroy(): void {
+    this.toastService.clear();
   }
 }
