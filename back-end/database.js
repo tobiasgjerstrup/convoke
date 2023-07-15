@@ -151,7 +151,7 @@ app.post("/api/v1/discordbot/playlist/post", async (req, res) => {
 });
 
 app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
-  /* if (req.session.user === undefined) {
+  if (req.session.user === undefined) {
     res.send({ statuscode: 401, message: "Not Logged in" });
     return;
   }
@@ -163,7 +163,7 @@ app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
   if (!req.body.playlist || !req.body.song) {
     res.send({ statuscode: 200, message: "Missing Body" });
     return;
-  } */
+  }
   const response = sys.deleteDiscordbotPlaylists(req.body);
   res.send({ statuscode: 200, message: response });
 });

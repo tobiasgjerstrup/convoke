@@ -5,6 +5,6 @@
 <div *ngFor="let item of playlists | keyvalue">
   <div>
     <h2>{{ item.key }}</h2>
-    <span *ngFor="let song of item.value | keyvalue"> {{ song.value }} </span>
+    <span *ngFor="let song of item.value | keyvalue"> | {{ song.value }} | </span>
   </div>
 </div>
