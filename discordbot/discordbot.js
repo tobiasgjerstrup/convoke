@@ -172,8 +172,9 @@ client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase().startsWith("convokeplaylist ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
       // if magnus removed video
-      const data = await libs.select("production", "playlists", ` WHERE playlistname = '${message.content.toLowerCase().slice(16)}'`);
+      let data = await libs.select("production", "playlists", ` WHERE playlistname = '${message.content.toLowerCase().slice(16)}'`);
 
+      data = shuffle(data);
       for (let i = 0; i < data.length; i++) {
         await convokeplaylist(message, data[i].song);
       }
@@ -244,3 +245,20 @@ async function convokeplaylist(message, song) {
 }
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function shuffle(array) {
+  let currentIndex = array.length;
+  let randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
