@@ -227,7 +227,12 @@ function playSongFromFile(filename, message) {
 }
 
 async function convokeplaylist(message, song) {
-  const metaData = await getMetaInfoFromYoutubeSearch(song);
+  let metaData = "";
+  try {
+    metaData = await getMetaInfoFromYoutubeSearch(song);
+  } catch {
+    return false;
+  }
   const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
   songs.push(metaData.url);
   if (!fs.existsSync(OUTPUT)) {
