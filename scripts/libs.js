@@ -258,7 +258,7 @@ export async function logMessage(message, errorCode, args = null) {
   let values = ``;
   for (const [key, value] of Object.entries(insertObject)) {
     keys += `\`${key}\`,`;
-    values += `'${value}',`;
+    values += `'${value.replaceAll("", "''")}',`;
   }
   keys = keys.slice(0, -1);
   values = values.slice(0, -1);
