@@ -36,18 +36,39 @@ async function downloadFromYoutube(YOUTUBE_URL, audioFileName, maxFileSize = 100
 
 async function getMetaInfoFromYoutubeSearch(search) {
   console.log(search);
-  const metaInfo = {}
+  const metaInfo = {};
   try {
-    const res = await ytdl.getBasicInfo(search);
-    metaInfo.title = res.videoDetails.title;
-    metaInfo.url = res.videoDetails.video_url;
+    if (search.includes("://www.youtube.com/")) {
+      // if url
+      const res = await ytdl.getBasicInfo(search);
+      metaInfo.title = res.videoDetails.title;
+      metaInfo.url = res.videoDetails.video_url;
+    } else {
+      // else search using name
+      const res = await reTry(search);
+      if (!res.items[0].url) {
+        console.error(res);
+      }
+      metaInfo.title = res.items[0].title;
+      metaInfo.url = res.items[0].url;
+    }
   } catch (err) {
-    const res = await ytsr(search, {limit: 1});
-    metaInfo.title = res.items[0].title
-    metaInfo.url = res.items[0].url
+    console.error();
   }
   console.log(metaInfo);
   return metaInfo;
+}
+
+async function reTry(search, retries = 0) {
+  try {
+    const res = await ytsr(search, { limit: 1 });
+    return res;
+  } catch {
+    if (retries < 10) {
+      console.log("failed getting video from name. Retrying: " + retries);
+      return await reTry(search, (retries += 1));
+    }
+  }
 }
 
 module.exports = { downloadFromYoutube, getMetaInfoFromYoutubeSearch };
