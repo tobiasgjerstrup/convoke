@@ -71,7 +71,6 @@ export async function getMinecraftPlayers() {
 
 export async function getMinecraftChatlog() {
   const data = await fs.readFile("../../minecraft-server/MC1-20.log", "utf8");
-  console.log(data);
   return data;
 }
 
@@ -82,7 +81,6 @@ export async function getDiscordbotPlaylists() {
     if (!playlists[entry.playlistName]) playlists[entry.playlistName] = [];
     playlists[entry.playlistName].push(entry.song);
   });
-  console.log(playlists);
   return playlists;
 }
 

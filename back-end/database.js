@@ -3,6 +3,7 @@ import express from "express";
 import session from "express-session";
 import cors from "cors";
 import * as sys from "./system.js";
+import * as music from "./libs/music.js";
 
 const app = express();
 
@@ -24,46 +25,39 @@ app.use(
 
 app.get("/api/v1/discordbot/playlists", async (req, res) => {
   const data = await sys.getDiscordbotPlaylists(req.query);
-  console.log("discordbot playlists");
   res.send({ data: data });
 });
 
 app.get("/api/v1/items", async (req, res) => {
   const data = await sys.getItems(req.query);
-  console.log("items");
   res.send({ data: data });
 });
 
 app.get("/api/v1/items/count", async (req, res) => {
   const data = await sys.getCount(req.query);
-  console.log("count");
   res.send({ data });
 });
 
 app.get("/api/v1/git", async (req, res) => {
   const data = await sys.getCommits(req.query);
-  console.log("git");
   res.send({ data });
 });
 
 app.get("/api/v1/minecraft/players", async (req, res) => {
   const data = await sys.getMinecraftPlayers(req.query);
-  console.log("minecraft players");
   res.send({ data: data });
 });
 
 app.get("/api/v1/minecraft/chatlog", async (req, res) => {
   const data = await sys.getMinecraftChatlog(req.query);
-  console.log("minecraft chatlog");
   res.send({ data: data });
 });
-// under here is testing stuff
+
 app.get("/api/v1", (req, res) => {
   res.send({ user: req.session.user });
 });
 
 app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, res) => {
-  console.log("signup");
   if (!("user" in req.body) || !("pass" in req.body)) {
     res.status(200);
     res.send({ statuscode: 401, message: "missing body" });
@@ -84,8 +78,6 @@ app.post("/api/v1/signup", express.urlencoded({ extended: true }), async (req, r
 });
 
 app.post("/api/v1/signin", express.urlencoded({ extended: true }), async (req, res) => {
-  console.log("signin");
-
   req.session.regenerate(async function (err) {
     if (err) next(err);
     if (!("user" in req.body) || !("pass" in req.body)) {
@@ -168,13 +160,33 @@ app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
   res.send({ statuscode: 200, message: response });
 });
 
-app.get("/api/v1/test", async (req, res) => {
-  if ((await sys.getUserPermissions(req.session.user)) === true) {
-    console.log("true");
-  } else {
-    console.log("false");
-  }
-  res.send({ statuscode: 200, message: "yes" });
+app.post("/api/v1/music/playlists", async (req, res) => {
+  res.send(await music.createPlaylist(req));
+});
+
+app.put("/api/v1/music/playlists", async (req, res) => {
+  res.send(await music.updatePlaylist(req));
+});
+
+app.delete("/api/v1/music/playlists", async (req, res) => {
+  res.send(await music.disablePlaylist(req));
+});
+
+app.get("/api/v1/music/playlists", async (req, res) => {
+  res.send(await music.getPlaylist(req));
 });
 
 app.listen(8080);
+
+
+
+/*
+DROP TRIGGER IF EXISTS musicPlaylists__AU;
+
+DELIMITER //
+CREATE TRIGGER musicPlaylists__AU AFTER UPDATE ON musicPlaylists
+FOR EACH ROW BEGIN  
+    INSERT INTO musicPlaylistsHistory SELECT * FROM musicPlaylists WHERE id = NEW.id;
+END;//
+DELIMITER ;
+*/
