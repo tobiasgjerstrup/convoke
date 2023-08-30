@@ -10,7 +10,8 @@ export async function INSERT(table, insertObject) {
 
   for (const [key, value] of Object.entries(insertObject)) {
     keys += `\`${key}\`,`;
-    values += `'${value.replaceAll("'", "''")}',`;
+    if (typeof value === "string") values += `'${value.replaceAll("'", "''")}',`;
+    else values += `'${value}',`;
   }
 
   keys = keys.slice(0, -1);
@@ -33,7 +34,6 @@ export async function SELECT(table, insertObject) {
   condition = condition.slice(0, -5);
   let WHERE = "";
   if (condition) WHERE = "WHERE";
-  console.log(`SELECT * FROM ${table} ${WHERE} ${condition}`);
   response = await connection.query(`SELECT * FROM ${table} ${WHERE} ${condition}`);
   return response;
 }
@@ -50,7 +50,6 @@ export async function SELECTAll(table, insertObject) {
   condition = condition.slice(0, -4);
   let WHERE = "";
   if (condition) WHERE = "WHERE";
-  console.log(`SELECT * FROM ${table} ${WHERE} ${condition}`);
   response = await connection.query(`SELECT * FROM ${table} ${WHERE} ${condition}`);
   return response;
 }
@@ -58,10 +57,9 @@ export async function SELECTAll(table, insertObject) {
 export async function UPDATE(table, insertObject) {
   let insertString = "";
 
-  console.log(insertObject);
   for (const [key, value] of Object.entries(insertObject)) {
     insertString += `\`${key}\` = `;
-    if (typeof value === "number") insertString += `'${value}',`;
+    if (typeof value !== "string") insertString += `'${value}',`;
     else insertString += `'${value.replaceAll("'", "''")}',`;
   }
 

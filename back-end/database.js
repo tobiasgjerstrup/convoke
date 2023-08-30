@@ -160,6 +160,8 @@ app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
   res.send({ statuscode: 200, message: response });
 });
 
+
+
 app.post("/api/v1/music/playlists", async (req, res) => {
   res.send(await music.createPlaylist(req));
 });
@@ -176,6 +178,22 @@ app.get("/api/v1/music/playlists", async (req, res) => {
   res.send(await music.getPlaylist(req));
 });
 
+app.post("/api/v1/music/songs", async (req, res) => {
+  res.send(await music.createSong(req));
+});
+
+app.put("/api/v1/music/songs", async (req, res) => {
+  res.send(await music.updateSong(req));
+});
+
+app.delete("/api/v1/music/songs", async (req, res) => {
+  res.send(await music.disableSong(req));
+});
+
+app.get("/api/v1/music/songs", async (req, res) => {
+  res.send(await music.getSong(req));
+});
+
 app.listen(8080);
 
 
@@ -185,6 +203,16 @@ DROP TRIGGER IF EXISTS musicPlaylists__AU;
 
 DELIMITER //
 CREATE TRIGGER musicPlaylists__AU AFTER UPDATE ON musicPlaylists
+FOR EACH ROW BEGIN  
+    INSERT INTO musicPlaylistsHistory SELECT * FROM musicPlaylists WHERE id = NEW.id;
+END;//
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS musicPlaylists__AI;
+
+DELIMITER //
+CREATE TRIGGER musicPlaylists__AI AFTER INSERT ON musicPlaylists
 FOR EACH ROW BEGIN  
     INSERT INTO musicPlaylistsHistory SELECT * FROM musicPlaylists WHERE id = NEW.id;
 END;//

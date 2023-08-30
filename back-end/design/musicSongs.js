@@ -1,15 +1,25 @@
-export const musicPlaylists = {
+export const musicSongs = {
   id: {
     type: "number",
     write: false,
     unique: true,
   },
+  playlist: {
+    type: "number",
+    write: true,
+    unique: false,
+  },
   name: {
     type: "string",
     write: true,
-    unique: true,
+    unique: false,
   },
-  createdOn: {
+  url: {
+    type: "string",
+    write: true,
+    unique: false,
+  },
+  addedOn: {
     type: "date",
     write: false,
     unique: false,
@@ -24,7 +34,7 @@ export const musicPlaylists = {
     write: false,
     unique: false,
   },
-  createdBy: {
+  addedBy: {
     type: "string",
     write: false,
     unique: false,
