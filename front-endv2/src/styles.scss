@@ -1,0 +1,24 @@
+@import 'bootstrap/scss/bootstrap';
+
+body {
+    background-color: rgb(20, 20, 20);
+    margin: 0px;
+    color: white;
+}
+
+.modal-body, .modal-header, .modal-footer{
+    background-color: rgb(30, 30, 30);
+}
+
+.form-control{
+    background-color: rgb(100, 100, 100);
+}
+
+.btn-close{
+    background-color: rgb(100, 100, 100);
+}
+
+.input-field{
+    color: white
+}
+/* Importing Bootstrap SCSS file. */

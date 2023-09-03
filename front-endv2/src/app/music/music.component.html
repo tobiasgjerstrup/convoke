@@ -1,0 +1,50 @@
+<div *ngFor="let playlist of playlists">
+	<button class="btn btn-lg btn-outline-primary" (click)="open(content, playlist)">{{ playlist.name }}</button>
+</div>	
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">{{selectedPlaylist.name}}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form>
+			<label>Songs:</label>
+			<div class="mb-3">
+				<div class="input-group">
+					<input
+						(keyup)="addToField('name', $event)"
+						class="form-control"
+						placeholder='Song Name'
+						name="dp"
+					/><input
+						(keyup)="addToField('url', $event)"
+						class="form-control"
+						placeholder='Song Url'
+						name="dp"
+					/>
+					<button type="button" class="btn btn-outline-light" (click)="addToField('add', $event)">Add</button>
+				</div>
+				<div class="input-group" *ngFor="let song of modalSongs">
+						<input
+						(keyup)="updateField('name', song.id, $event)"
+						class="form-control input-field"
+						placeholder={{song.name}}
+						name="dp"
+						*ngIf="song.active"
+					/><input
+						(keyup)="updateField('url', song.id, $event)"
+						class="form-control input-field"
+						placeholder={{song.url}}
+						name="dp"
+						*ngIf="song.active"
+					/><button type="button" class="btn btn-outline-light" *ngIf="song.active" (click)="deactivateSong(song)">Delete</button>
+					<button type="button" class="btn btn-outline-light" *ngIf="!song.active" (click)="reactivateSong(song)">Undo</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-light" (click)="modal.close('Save click')">Save</button>
+	</div>
+</ng-template>

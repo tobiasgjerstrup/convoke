@@ -1,3 +1,3 @@
 export interface AllPropertiesString {
-  [key: string]: [songs: string];
+  name: string;
 }

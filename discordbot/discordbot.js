@@ -172,11 +172,12 @@ client.on("messageCreate", async (message) => {
     if (message.content.toLowerCase().startsWith("convokeplaylist ")) {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
       // if magnus removed video
-      let data = await libs.select("production", "playlists", ` WHERE playlistname = '${message.content.toLowerCase().slice(16)}'`);
+      const playlists = await libs.select("production", "musicPlaylists", ` WHERE name = '${message.content.toLowerCase().slice(16)}' AND active = 1`);
+      let data = await libs.select("production", "musicSongs", ` WHERE playlist = '${playlists[0].id}' AND active = 1`);
 
       data = shuffle(data);
       for (let i = 0; i < data.length; i++) {
-        await convokeplaylist(message, data[i].song);
+        await convokeplaylist(message, data[i].url);
       }
     }
   } catch (err) {

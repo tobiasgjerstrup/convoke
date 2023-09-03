@@ -1,7 +1,40 @@
+import * as sys from "../system.js";
+import * as mysql from "./mysql.js";
+
+async function checkCookieBypass(req){
+  // if user and pass is in body we let them pass without a cookie. This should only used for development reasons
+  if (!("user" in req.query) || !("pass" in req.query)) {
+    return false;
+  }
+
+  const username = req.query.user;
+  const password = req.query.pass;
+  
+  delete req.query.user;
+  delete req.query.pass;
+
+  const user = await mysql.SELECT("users", {username: username});
+  if (user[0][0] === undefined) {
+    return false;
+  }
+
+  const matchingPassword = await sys.compareHashWithValue(user[0][0].password, password);
+
+  if (!matchingPassword) {
+    return false;
+  }
+
+  return true;
+}
+
 export async function checkLoggedIn(req) {
   if (req.session.user === undefined) {
-    return { statuscode: 401, message: "Not Logged in" };
+    const cookieByPass = await checkCookieBypass(req);
+    if (!cookieByPass) {
+      return { statuscode: 401, message: "Not Logged in" };
+    }
   }
+
   return { statuscode: 200 };
 }
 

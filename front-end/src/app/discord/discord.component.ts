@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ToastService } from '../services/toast.service';
-import { AllPropertiesString } from './interfaces';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-discord',
@@ -10,13 +10,14 @@ import { AllPropertiesString } from './interfaces';
   styleUrls: ['./discord.component.scss'],
 })
 export class DiscordComponent {
-  constructor(private http: HttpClient, public toastService: ToastService) {}
-
+  constructor(private http: HttpClient, public toastService: ToastService, private modalService: NgbModal) {}
+  closeResult = '';
   playlistUpdate = {
     playlist: '',
     song: '',
   };
-  playlists: AllPropertiesString = <AllPropertiesString>{};
+  // playlists: AllPropertiesString = <AllPropertiesString>{};
+  playlists : any = [];
   apiUrl = environment.apiUrl;
 
   ngOnInit() {
@@ -24,9 +25,10 @@ export class DiscordComponent {
   }
 
   updatePlaylists() {
-    this.http.get<any>(this.apiUrl + 'api/v1/discordbot/playlists?').subscribe((playlists) => {
+    this.http.get<any>(this.apiUrl + 'api/v1/music/playlists?').subscribe((playlists) => {
       this.playlists = playlists.data;
     });
+    console.log(this.playlists);
   }
 
   updateField(value: string, event: any) {
@@ -68,4 +70,25 @@ export class DiscordComponent {
       });
     }
   }
+
+  open(content: any) {
+		this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+			(result: any) => {
+				this.closeResult = `Closed with: ${result}`;
+			},
+			(reason: any) => {
+				this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+			},
+		);
+	}
+
+	private getDismissReason(reason: any): string {
+		if (reason === ModalDismissReasons.ESC) {
+			return 'by pressing ESC';
+		} else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+			return 'by clicking on a backdrop';
+		} else {
+			return `with: ${reason}`;
+		}
+	}
 }

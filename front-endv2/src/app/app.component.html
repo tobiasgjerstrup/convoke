@@ -1,0 +1,14 @@
+<div *ngIf="user">
+  <span>{{ user }}</span>
+  <router-outlet></router-outlet>
+</div>
+
+<div *ngIf="!user">
+  <label>username:</label><input (keyup)="updateField('user', $event)" />
+  <label>password:</label
+  ><input (keyup)="updateField('pass', $event)" type="password" />
+  <button (click)="login()">Login!</button>
+  <button (click)="register()">Register!</button>
+
+  <h1>Please Register & Login before accessing the site</h1>
+</div>
