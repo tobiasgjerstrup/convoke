@@ -28,7 +28,7 @@ export class AppComponent {
   }
 
   register() {
-    const test = this.http
+    this.http
       .post(environment.apiUrl + 'api/v1/signup', this.loginInfo)
       .subscribe((data) => {
         this.user = data.user;
@@ -36,7 +36,7 @@ export class AppComponent {
   }
 
   login() {
-    const test = this.http
+    this.http
       .post(environment.apiUrl + 'api/v1/signin', this.loginInfo)
       .subscribe((data) => {
         this.user = data.user;
@@ -44,7 +44,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.http.get(environment.apiUrl + 'api/v1/').subscribe((data) => {
+    this.http.get(environment.apiUrl + 'api/v1/user').subscribe((data) => {
       this.user = data.user;
     });
   }

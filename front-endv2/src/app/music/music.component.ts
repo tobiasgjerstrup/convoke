@@ -82,6 +82,8 @@ export class MusicComponent {
           this.closeResult = `Closed with: ${result}`;
           if (result === 'Save click') {
             this.saveFields();
+          } else if (result === 'Delete click') {
+            this.deactivatePlaylist();
           }
         },
         (reason) => {
@@ -91,6 +93,14 @@ export class MusicComponent {
   }
 
   saveFields() {
+    this.httpService
+      .put(environment.apiUrl + 'api/v1/music/playlists', {
+        id: this.selectedPlaylist.id,
+        name: this.selectedPlaylist.name,
+      })
+      .subscribe((response) => {
+        console.log(response);
+      });
     this.modalSongs.forEach((song) => {
       if (song.id > 0) {
         // if id is over 0 it already exists so put instead of post
@@ -130,6 +140,7 @@ export class MusicComponent {
 
   addToField(type: string, event: any) {
     this.newSong.id = Math.floor(Math.random() * 100000000 + 1) * -1;
+    if (type === 'title') this.selectedPlaylist.name = event.target.value;
     if (type === 'name') this.newSong.name = event.target.value;
     if (type === 'url') this.newSong.url = event.target.value;
     if (event.key === 'Enter' || type === 'add') {
@@ -151,6 +162,38 @@ export class MusicComponent {
       if (_song.id === song.id) {
         _song.active = 1;
       }
+    });
+  }
+
+  createPlaylist() {
+    this.httpService
+      .post(environment.apiUrl + 'api/v1/music/playlists', {
+        name: 'New Playlist ' + Math.floor(Math.random() * 100000000 + 1)
+      })
+      .subscribe((response) => {
+        console.log(response);
+        this.getPlaylists();
+      });
+  }
+
+  deactivatePlaylist() {
+    this.httpService
+      .delete(environment.apiUrl + 'api/v1/music/playlists', {
+        id: this.selectedPlaylist.id
+      })
+      .subscribe((response) => {
+        console.log(response);
+        this.getPlaylists();
+      });
+
+    this.modalSongs.forEach((song) => {
+      this.httpService
+        .delete(environment.apiUrl + 'api/v1/music/songs', {
+          id: song.id,
+        })
+        .subscribe((response) => {
+          console.log(response);
+        });
     });
   }
 

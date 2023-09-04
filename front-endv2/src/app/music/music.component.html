@@ -4,7 +4,12 @@
 
 <ng-template #content let-modal>
 	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">{{selectedPlaylist.name}}</h4>
+		<input
+			(keyup)="addToField('title', $event)"
+			class="form-control"
+			placeholder={{selectedPlaylist.name}}
+			name="dp"
+		/>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
@@ -45,6 +50,14 @@
 		</form>
 	</div>
 	<div class="modal-footer">
-		<button type="button" class="btn btn-outline-light" (click)="modal.close('Save click')">Save</button>
+		<button type="button" class="btn btn-outline-danger" (click)="modal.close('Delete click')">Delete</button>
+		<button type="button" class="btn btn-outline-success" (click)="modal.close('Save click')">Save</button>
 	</div>
 </ng-template>
+	<button class="btn btn-lg btn-outline-success" (click)="createPlaylist()">Create Playlist</button>
+
+<!-- 	
+	<button class="btn btn-lg btn-outline-success">gay</button>
+	<button class="btn btn-lg btn-outline-warning">gay</button>
+	<button class="btn btn-lg btn-outline-danger">gay</button>
+ -->
