@@ -1,41 +1,43 @@
 import * as sys from "../system.js";
 import * as mysql from "./mysql.js";
 
-async function checkCookieBypass(req){
+async function checkCookieBypass(req) {
   // if user and pass is in body we let them pass without a cookie. This should only used for development reasons
   if (!("user" in req.query) || !("pass" in req.query)) {
-    return false;
+    return { statuscode: 400 };
   }
 
   const username = req.query.user;
   const password = req.query.pass;
-  
+
   delete req.query.user;
   delete req.query.pass;
 
-  const user = await mysql.SELECT("users", {username: username});
+  const user = await mysql.SELECT("users", { username: username });
   if (user[0][0] === undefined) {
-    return false;
+    return { statuscode: 400 };
   }
 
   const matchingPassword = await sys.compareHashWithValue(user[0][0].password, password);
 
   if (!matchingPassword) {
-    return false;
+    return { statuscode: 400 };
   }
 
-  return true;
+  return { statuscode: 200, message: "Logged in!", user: username };
 }
 
 export async function checkLoggedIn(req) {
   if (req.session.user === undefined) {
     const cookieByPass = await checkCookieBypass(req);
-    if (!cookieByPass) {
+    if (cookieByPass.statuscode !== 200) {
       return { statuscode: 401, message: "Not Logged in" };
+    } else {
+      return cookieByPass;
     }
   }
 
-  return { statuscode: 200 };
+  return { statuscode: 200, message: "Logged in!", user: req.session.user };
 }
 
 export async function validateFields(fields, design) {

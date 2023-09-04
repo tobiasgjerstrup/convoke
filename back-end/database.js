@@ -4,6 +4,7 @@ import session from "express-session";
 import cors from "cors";
 import * as sys from "./system.js";
 import * as music from "./libs/music.js";
+import * as functions from './libs/functions.js'
 
 const app = express();
 
@@ -162,6 +163,7 @@ app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
 
 
 
+
 app.post("/api/v1/music/playlists", async (req, res) => {
   res.send(await music.createPlaylist(req));
 });
@@ -192,6 +194,10 @@ app.delete("/api/v1/music/songs", async (req, res) => {
 
 app.get("/api/v1/music/songs", async (req, res) => {
   res.send(await music.getSong(req));
+});
+
+app.get("/api/v1/user", async(req, res) => {
+  res.send( await functions.checkLoggedIn(req) );
 });
 
 app.listen(8080);
