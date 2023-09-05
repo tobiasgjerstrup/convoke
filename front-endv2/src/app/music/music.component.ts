@@ -197,6 +197,10 @@ export class MusicComponent {
     });
   }
 
+  fieldFocused(value: string, event: any){
+    event.target.value = value;
+  }
+
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';

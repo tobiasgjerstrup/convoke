@@ -5,6 +5,7 @@
 <ng-template #content let-modal>
 	<div class="modal-header">
 		<input
+			(focus)="fieldFocused(selectedPlaylist.name, $event)"
 			(keyup)="addToField('title', $event)"
 			class="form-control"
 			placeholder={{selectedPlaylist.name}}
@@ -32,12 +33,14 @@
 				</div>
 				<div class="input-group" *ngFor="let song of modalSongs">
 						<input
+						(focus)="fieldFocused(song.name, $event)"
 						(keyup)="updateField('name', song.id, $event)"
 						class="form-control input-field"
 						placeholder={{song.name}}
 						name="dp"
 						*ngIf="song.active"
 					/><input
+						(focus)="fieldFocused(song.url, $event)"
 						(keyup)="updateField('url', song.id, $event)"
 						class="form-control input-field"
 						placeholder={{song.url}}
