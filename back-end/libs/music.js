@@ -17,7 +17,7 @@ export async function createPlaylist(request) {
   const playlistsWithName = await mysql.SELECT("musicPlaylists", { name: body.name });
   if (playlistsWithName[0][0]) return { statuscode: 400, message: "a playlist with that name exists already" };
 
-  const response = await mysql.INSERT("musicPlaylists", { name: body.name, createdBy: request.session.user, lastModifiedBy: request.session.user });
+  const response = await mysql.INSERT("musicPlaylists", { name: body.name, createdBy: loggedInRes.user, lastModifiedBy: loggedInRes.user });
   if (!response) {
     return { statuscode: 400, message: "something went wrong when creating the playlist" };
   }
@@ -123,7 +123,7 @@ export async function createSong(request) {
 
   if (body.name.length > 255) return { statuscode: 400, message: "field 'name' exceeded the character limit of 255" };
 
-  const response = await mysql.INSERT("musicSongs", { url: body.url, playlist: body.playlist, name: body.name, addedBy: request.session.user, lastModifiedBy: request.session.user });
+  const response = await mysql.INSERT("musicSongs", { url: body.url, playlist: body.playlist, name: body.name, addedBy: loggedInRes.user, lastModifiedBy: loggedInRes.user });
   if (!response) {
     return { statuscode: 400, message: "something went wrong when creating the song" };
   }
