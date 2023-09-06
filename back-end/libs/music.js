@@ -57,6 +57,8 @@ export async function updatePlaylist(request) {
   const sameBody = await mysql.SELECTAll("musicPlaylists", bodyWriteableUnique);
   if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
 
+  bodyWriteable.lastModifiedBy = loggedInRes.user; // add ID since it's required for checking changes & updating
+
   const response = await mysql.UPDATE("musicPlaylists", bodyWriteable);
   if (response.statuscode !== 200) {
     return response;
@@ -85,6 +87,8 @@ export async function disablePlaylist(request) {
 
   body.id = id;
   body.active = 0;
+  body.lastModifiedBy = loggedInRes.user
+
   const response = await mysql.UPDATE("musicPlaylists", body);
   if (response.statuscode !== 200) {
     return response;
@@ -163,6 +167,8 @@ export async function updateSong(request) {
   const sameBody = await mysql.SELECTAll("musicSongs", bodyWriteableUnique);
   if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
 
+  bodyWriteable.lastModifiedBy = loggedInRes.user; // add ID since it's required for checking changes & updating
+
   const response = await mysql.UPDATE("musicSongs", bodyWriteable);
   if (response.statuscode !== 200) {
     return response;
@@ -191,6 +197,8 @@ export async function disableSong(request) {
 
   body.id = id;
   body.active = 0;
+  body.lastModifiedBy = loggedInRes.user
+  
   const response = await mysql.UPDATE("musicSongs", body);
   if (response.statuscode !== 200) {
     return response;
