@@ -4,11 +4,35 @@
 </div>
 
 <div *ngIf="!user">
-  <label>username:</label><input (keyup)="updateField('user', $event)" />
-  <label>password:</label
-  ><input (keyup)="updateField('pass', $event)" type="password" />
-  <button (click)="login()">Login!</button>
-  <button (click)="register()">Register!</button>
-
-  <h1>Please Register & Login before accessing the site</h1>
+  <ng-template #content2 let-modal>
+    <div class="modal-body">
+      <form>
+        <label>Login/Register:</label>
+        <div class="mb-3">
+          <div class="input-group">
+            <input
+              (keyup)="updateField('user', $event)"
+              class="form-control"
+              placeholder="Username"
+              name="dp"
+            /><input
+              type="password"
+              (keyup)="updateField('pass', $event)"
+              class="form-control"
+              placeholder="Password"
+              name="dp"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-danger" (click)="register()">
+        Register!
+      </button>
+      <button type="button" class="btn btn-outline-success" (click)="login()">
+        Login!
+      </button>
+    </div>
+  </ng-template>
 </div>
