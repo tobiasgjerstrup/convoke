@@ -5,7 +5,6 @@ import * as mysql from "./mysql.js";
 //#region Playlists
 export async function createPlaylist(request, user) {
   const body = request.body;
-  if (!body.name) return { statuscode: 400, message: "Missing field 'name' in body" };
 
   if (body.name.length > 255) return { statuscode: 400, message: "field 'name' exceeded the character limit of 255" };
 
@@ -21,7 +20,6 @@ export async function createPlaylist(request, user) {
 
 export async function updatePlaylist(request, user) {
   const body = request.body;
-  if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
   const validation = await functions.validateFields(body, musicPlaylists);
   if (validation.statuscode !== 200) {
@@ -59,9 +57,7 @@ export async function updatePlaylist(request, user) {
 }
 
 export async function disablePlaylist(request, user) {
-
   const body = request.body;
-  if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
   const playlistToUpdate = await mysql.SELECT("musicPlaylists", { id: body.id, active: 1 });
   if (!playlistToUpdate[0][0]) return { statuscode: 400, message: "a playlist with that id doesn't exist or it's already disabled" };
@@ -74,7 +70,7 @@ export async function disablePlaylist(request, user) {
 
   body.id = id;
   body.active = 0;
-  body.lastModifiedBy = user
+  body.lastModifiedBy = user;
 
   const response = await mysql.UPDATE("musicPlaylists", body);
   if (response.statuscode !== 200) {
@@ -85,7 +81,6 @@ export async function disablePlaylist(request, user) {
 }
 
 export async function getPlaylist(request, user) {
-
   const playlistsWithName = await mysql.SELECT("musicPlaylists", request.query);
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
 
@@ -95,9 +90,6 @@ export async function getPlaylist(request, user) {
 //#region Songs
 export async function createSong(request, user) {
   const body = request.body;
-  if (!body.name) return { statuscode: 400, message: "Missing field 'name' in body" };
-  if (!body.playlist) return { statuscode: 400, message: "Missing field 'playlist' in body" };
-  if (!body.url) return { statuscode: 400, message: "Missing field 'url' in body" };
 
   const validation = await functions.validateFields(request.body, musicSongs);
   if (validation.statuscode !== 200) {
@@ -115,7 +107,6 @@ export async function createSong(request, user) {
 
 export async function updateSong(request, user) {
   const body = request.body;
-  if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
   const validation = await functions.validateFields(body, musicSongs);
   if (validation.statuscode !== 200) {
@@ -153,9 +144,7 @@ export async function updateSong(request, user) {
 }
 
 export async function disableSong(request, user) {
-
   const body = request.body;
-  if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
   const songToUpdate = await mysql.SELECT("musicSongs", { id: body.id, active: 1 });
   if (!songToUpdate[0][0]) return { statuscode: 400, message: "a song with that id doesn't exist or it's already disabled" };
@@ -168,8 +157,8 @@ export async function disableSong(request, user) {
 
   body.id = id;
   body.active = 0;
-  body.lastModifiedBy = user
-  
+  body.lastModifiedBy = user;
+
   const response = await mysql.UPDATE("musicSongs", body);
   if (response.statuscode !== 200) {
     return response;
@@ -179,7 +168,6 @@ export async function disableSong(request, user) {
 }
 
 export async function getSong(request, user) {
-
   const songsWithName = await mysql.SELECT("musicSongs", request.query);
   if (!songsWithName[0][0]) return { statuscode: 400, message: "no song found" };
 
