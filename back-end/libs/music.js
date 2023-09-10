@@ -1,14 +1,9 @@
-import { musicPlaylists } from "../design/musicPlaylists.js";
-import { musicSongs } from "../design/musicSongs.js";
+import { musicPlaylists, musicSongs } from "../design/music.js";
 import * as functions from "./functions.js";
 import * as mysql from "./mysql.js";
 
 //#region Playlists
-export async function createPlaylist(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function createPlaylist(request, user) {
   const body = request.body;
   if (!body.name) return { statuscode: 400, message: "Missing field 'name' in body" };
 
@@ -17,18 +12,14 @@ export async function createPlaylist(request) {
   const playlistsWithName = await mysql.SELECT("musicPlaylists", { name: body.name });
   if (playlistsWithName[0][0]) return { statuscode: 400, message: "a playlist with that name exists already" };
 
-  const response = await mysql.INSERT("musicPlaylists", { name: body.name, createdBy: loggedInRes.user, lastModifiedBy: loggedInRes.user });
+  const response = await mysql.INSERT("musicPlaylists", { name: body.name, createdBy: user, lastModifiedBy: user });
   if (!response) {
     return { statuscode: 400, message: "something went wrong when creating the playlist" };
   }
   return { statuscode: 200, message: "playlist created successfully" };
 }
 
-export async function updatePlaylist(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function updatePlaylist(request, user) {
   const body = request.body;
   if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
@@ -57,7 +48,7 @@ export async function updatePlaylist(request) {
   const sameBody = await mysql.SELECTAll("musicPlaylists", bodyWriteableUnique);
   if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
 
-  bodyWriteable.lastModifiedBy = loggedInRes.user; // add ID since it's required for checking changes & updating
+  bodyWriteable.lastModifiedBy = user; // add ID since it's required for checking changes & updating
 
   const response = await mysql.UPDATE("musicPlaylists", bodyWriteable);
   if (response.statuscode !== 200) {
@@ -67,11 +58,7 @@ export async function updatePlaylist(request) {
   return { statuscode: 200, message: "updated playlist successfully" };
 }
 
-export async function disablePlaylist(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function disablePlaylist(request, user) {
 
   const body = request.body;
   if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
@@ -87,7 +74,7 @@ export async function disablePlaylist(request) {
 
   body.id = id;
   body.active = 0;
-  body.lastModifiedBy = loggedInRes.user
+  body.lastModifiedBy = user
 
   const response = await mysql.UPDATE("musicPlaylists", body);
   if (response.statuscode !== 200) {
@@ -97,11 +84,7 @@ export async function disablePlaylist(request) {
   return { statuscode: 200, message: "disabled playlist successfully" };
 }
 
-export async function getPlaylist(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function getPlaylist(request, user) {
 
   const playlistsWithName = await mysql.SELECT("musicPlaylists", request.query);
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
@@ -110,11 +93,7 @@ export async function getPlaylist(request) {
 }
 //#endregion
 //#region Songs
-export async function createSong(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function createSong(request, user) {
   const body = request.body;
   if (!body.name) return { statuscode: 400, message: "Missing field 'name' in body" };
   if (!body.playlist) return { statuscode: 400, message: "Missing field 'playlist' in body" };
@@ -127,18 +106,14 @@ export async function createSong(request) {
 
   if (body.name.length > 255) return { statuscode: 400, message: "field 'name' exceeded the character limit of 255" };
 
-  const response = await mysql.INSERT("musicSongs", { url: body.url, playlist: body.playlist, name: body.name, addedBy: loggedInRes.user, lastModifiedBy: loggedInRes.user });
+  const response = await mysql.INSERT("musicSongs", { url: body.url, playlist: body.playlist, name: body.name, addedBy: user, lastModifiedBy: user });
   if (!response) {
     return { statuscode: 400, message: "something went wrong when creating the song" };
   }
   return { statuscode: 200, message: "song created successfully" };
 }
 
-export async function updateSong(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function updateSong(request, user) {
   const body = request.body;
   if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
 
@@ -167,7 +142,7 @@ export async function updateSong(request) {
   const sameBody = await mysql.SELECTAll("musicSongs", bodyWriteableUnique);
   if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
 
-  bodyWriteable.lastModifiedBy = loggedInRes.user; // add ID since it's required for checking changes & updating
+  bodyWriteable.lastModifiedBy = user; // add ID since it's required for checking changes & updating
 
   const response = await mysql.UPDATE("musicSongs", bodyWriteable);
   if (response.statuscode !== 200) {
@@ -177,11 +152,7 @@ export async function updateSong(request) {
   return { statuscode: 200, message: "updated song successfully" };
 }
 
-export async function disableSong(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function disableSong(request, user) {
 
   const body = request.body;
   if (!body.id) return { statuscode: 400, message: "Missing field 'id' in body" };
@@ -197,7 +168,7 @@ export async function disableSong(request) {
 
   body.id = id;
   body.active = 0;
-  body.lastModifiedBy = loggedInRes.user
+  body.lastModifiedBy = user
   
   const response = await mysql.UPDATE("musicSongs", body);
   if (response.statuscode !== 200) {
@@ -207,11 +178,7 @@ export async function disableSong(request) {
   return { statuscode: 200, message: "disabled song successfully" };
 }
 
-export async function getSong(request) {
-  const loggedInRes = await functions.checkLoggedIn(request);
-  if (loggedInRes.statuscode !== 200) {
-    return loggedInRes;
-  }
+export async function getSong(request, user) {
 
   const songsWithName = await mysql.SELECT("musicSongs", request.query);
   if (!songsWithName[0][0]) return { statuscode: 400, message: "no song found" };

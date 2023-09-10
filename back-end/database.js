@@ -165,35 +165,35 @@ app.post("/api/v1/discordbot/playlist/delete", async (req, res) => {
 
 
 app.post("/api/v1/music/playlists", async (req, res) => {
-  res.send(await music.createPlaylist(req));
+  res.send(await functions.doRequest('createPlaylist', req));
 });
 
 app.put("/api/v1/music/playlists", async (req, res) => {
-  res.send(await music.updatePlaylist(req));
+  res.send(await functions.doRequest('updatePlaylist', req));
 });
 
 app.delete("/api/v1/music/playlists", async (req, res) => {
-  res.send(await music.disablePlaylist(req));
+  res.send(await functions.doRequest('disablePlaylist', req));
 });
 
 app.get("/api/v1/music/playlists", async (req, res) => {
-  res.send(await music.getPlaylist(req));
+  res.send(await functions.doRequest('getPlaylist', req));
 });
 
 app.post("/api/v1/music/songs", async (req, res) => {
-  res.send(await music.createSong(req));
+  res.send(await functions.doRequest('createSong', req));
 });
 
 app.put("/api/v1/music/songs", async (req, res) => {
-  res.send(await music.updateSong(req));
+  res.send(await functions.doRequest('updateSong', req));
 });
 
 app.delete("/api/v1/music/songs", async (req, res) => {
-  res.send(await music.disableSong(req));
+  res.send(await functions.doRequest('disableSong', req));
 });
 
 app.get("/api/v1/music/songs", async (req, res) => {
-  res.send(await music.getSong(req));
+  res.send(await functions.doRequest('getSong', req));
 });
 
 app.get("/api/v1/user", async(req, res) => {
