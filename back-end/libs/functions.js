@@ -1,5 +1,35 @@
 import * as sys from "../system.js";
+import { createPlaylist, createSong, disablePlaylist, disableSong, getPlaylist, getSong, updatePlaylist, updateSong } from "./music.js";
 import * as mysql from "./mysql.js";
+
+export async function doRequest(functionName, request) {
+  const loggedInRes = await checkLoggedIn(request);
+  if (loggedInRes.statuscode !== 200) {
+    return loggedInRes;
+  }
+
+  switch (functionName) {
+    case "getPlaylist":
+      return getPlaylist(request, loggedInRes.user);
+    case "createPlaylist":
+      return createPlaylist(request, loggedInRes.user);
+    case "updatePlaylist":
+      return updatePlaylist(request, loggedInRes.user);
+    case "disablePlaylist":
+      return disablePlaylist(request, loggedInRes.user);
+    case "getSong":
+      return getSong(request, loggedInRes.user);
+    case "createSong":
+      return createSong(request, loggedInRes.user);
+    case "updateSong":
+      return updateSong(request, loggedInRes.user);
+    case "disableSong":
+      return disableSong(request, loggedInRes.user);
+    default:
+      console.error(functionName + " does not exist");
+      break;
+  }
+}
 
 async function checkCookieBypass(req) {
   // if user and pass is in body we let them pass without a cookie. This should only used for development reasons
