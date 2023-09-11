@@ -74,7 +74,7 @@ export async function getPlaylist(request, user) {
 }
 
 export async function getPlaylistHistory(request, user) {
-  const playlistsWithName = await mysql.SELECT("musicPlaylistsHistory", request.query, "ORDER BY lastModifiedOn");
+  const playlistsWithName = await mysql.SELECT("musicPlaylistsHistory", request.query);
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
 
   const responseObject = { 0: playlistsWithName[0][0] };

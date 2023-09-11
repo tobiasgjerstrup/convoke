@@ -22,7 +22,7 @@ export async function INSERT(table, insertObject) {
   return true;
 }
 
-export async function SELECT(table, insertObject, extraString) {
+export async function SELECT(table, insertObject) {
   let response;
   let condition = "";
 
@@ -50,7 +50,7 @@ export async function SELECTAll(table, insertObject) {
   condition = condition.slice(0, -4);
   let WHERE = "";
   if (condition) WHERE = "WHERE";
-  response = await connection.query(`SELECT * FROM ${table} ${WHERE} ${condition} ${extraString}`);
+  response = await connection.query(`SELECT * FROM ${table} ${WHERE} ${condition}`);
   return response;
 }
 
