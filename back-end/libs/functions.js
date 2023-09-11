@@ -10,15 +10,19 @@ export async function doRequest(functionName, request) {
   }
 
   let requiredFieldsRes = "";
+  let validateFieldsRes = "";
   switch (request.route.path) {
     case "/api/v1/music/playlists":
       requiredFieldsRes = await checkForRequiredfields(request, musicPlaylists);
+      validateFieldsRes = await validateFields(request, musicPlaylists)
       break;
     case "/api/v1/music/songs":
       requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
+      validateFieldsRes = await validateFields(request, musicSongs)
       break;
   }
   if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
+  if (validateFieldsRes.statuscode !== 200) return validateFieldsRes;
 
   switch (functionName) {
     case "getPlaylist":
@@ -97,15 +101,15 @@ export async function checkLoggedIn(req) {
 export async function validateFields(fields, design) {
   let unknownKeys = "";
   let wrongTypes = "";
-  Object.keys(fields).forEach(function (key) {
+  Object.keys(fields.body).forEach(function (key) {
     if (!design.hasOwnProperty(key)) {
       unknownKeys += key + ", ";
-    } else if (typeof fields[key] !== design[key]["type"]) {
+    } else if (typeof fields.body[key] !== design[key]["type"]) {
       wrongTypes += key + ", ";
     }
   });
-  if (unknownKeys !== "") return { statuscode: 400, message: "unknown key(s) in body: " + unknownKeys, schema: design };
-  if (wrongTypes !== "") return { statuscode: 400, message: "field(s) has wrong type(s): " + wrongTypes, schema: design };
+  if (unknownKeys !== "") return { statuscode: 400, message: "unknown key(s) in body: " + unknownKeys.slice(0, -2), schema: design };
+  if (wrongTypes !== "") return { statuscode: 400, message: "field(s) has wrong type(s): " + wrongTypes.slice(0, -2), schema: design };
   return { statuscode: 200 };
 }
 

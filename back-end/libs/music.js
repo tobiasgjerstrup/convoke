@@ -6,8 +6,6 @@ import * as mysql from "./mysql.js";
 export async function createPlaylist(request, user) {
   const body = request.body;
 
-  if (body.name.length > 255) return { statuscode: 400, message: "field 'name' exceeded the character limit of 255" };
-
   const playlistsWithName = await mysql.SELECT("musicPlaylists", { name: body.name });
   if (playlistsWithName[0][0]) return { statuscode: 400, message: "a playlist with that name exists already" };
 
@@ -20,11 +18,6 @@ export async function createPlaylist(request, user) {
 
 export async function updatePlaylist(request, user) {
   const body = request.body;
-
-  const validation = await functions.validateFields(body, musicPlaylists);
-  if (validation.statuscode !== 200) {
-    return validation;
-  }
 
   const playlistToUpdate = await mysql.SELECT("musicPlaylists", { id: body.id });
   if (!playlistToUpdate[0][0]) return { statuscode: 400, message: "a playlist with that id doesn't exist" };
@@ -61,14 +54,7 @@ export async function disablePlaylist(request, user) {
 
   const playlistToUpdate = await mysql.SELECT("musicPlaylists", { id: body.id, active: 1 });
   if (!playlistToUpdate[0][0]) return { statuscode: 400, message: "a playlist with that id doesn't exist or it's already disabled" };
-  const id = body.id;
-  delete body.id;
-
-  if (Object.keys(body).length !== 0) {
-    return { statuscode: 400, message: "body contains unknown fields", unknownFields: body };
-  }
-
-  body.id = id;
+ 
   body.active = 0;
   body.lastModifiedBy = user;
 
@@ -108,11 +94,6 @@ export async function createSong(request, user) {
 export async function updateSong(request, user) {
   const body = request.body;
 
-  const validation = await functions.validateFields(body, musicSongs);
-  if (validation.statuscode !== 200) {
-    return validation;
-  }
-
   const songToUpdate = await mysql.SELECT("musicSongs", { id: body.id });
   if (!songToUpdate[0][0]) return { statuscode: 400, message: "a song with that id doesn't exist" };
 
@@ -148,14 +129,7 @@ export async function disableSong(request, user) {
 
   const songToUpdate = await mysql.SELECT("musicSongs", { id: body.id, active: 1 });
   if (!songToUpdate[0][0]) return { statuscode: 400, message: "a song with that id doesn't exist or it's already disabled" };
-  const id = body.id;
-  delete body.id;
 
-  if (Object.keys(body).length !== 0) {
-    return { statuscode: 400, message: "body contains unknown fields", unknownFields: body };
-  }
-
-  body.id = id;
   body.active = 0;
   body.lastModifiedBy = user;
 
