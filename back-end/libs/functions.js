@@ -51,7 +51,7 @@ async function checkForRequiredfields(request, design) {
     }
   });
   // bad code but return is dumb in foreach loops
-  if (response !== "Required field(s) is missing in body ") return { statuscode: 400, message: response };
+  if (response !== "Required field(s) is missing in body: ") return { statuscode: 400, message: response };
   return { statuscode: 200, message: "All required fields found" };
 }
 
