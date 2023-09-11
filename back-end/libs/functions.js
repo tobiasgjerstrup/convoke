@@ -1,7 +1,7 @@
 import * as sys from "../system.js";
-import { createPlaylist, createSong, disablePlaylist, disableSong, getPlaylist, getSong, updatePlaylist, updateSong } from "./music.js";
+import { createPlaylist, createSong, disablePlaylist, disableSong, getPlaylist, getPlaylistHistory, getSong, updatePlaylist, updateSong } from "./music.js";
 import * as mysql from "./mysql.js";
-import { musicPlaylists, musicSongs } from "../design/music.js";
+import { musicPlaylists, musicPlaylistsHistory, musicSongs } from "../design/music.js";
 
 export async function doRequest(functionName, request) {
   const loggedInRes = await checkLoggedIn(request);
@@ -14,11 +14,15 @@ export async function doRequest(functionName, request) {
   switch (request.route.path) {
     case "/api/v1/music/playlists":
       requiredFieldsRes = await checkForRequiredfields(request, musicPlaylists);
-      validateFieldsRes = await validateFields(request, musicPlaylists)
+      validateFieldsRes = await validateFields(request, musicPlaylists);
+      break;
+    case "/api/v1/music/playlists/history":
+      requiredFieldsRes = await checkForRequiredfields(request, musicPlaylistsHistory);
+      validateFieldsRes = await validateFields(request, musicPlaylistsHistory);
       break;
     case "/api/v1/music/songs":
       requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
-      validateFieldsRes = await validateFields(request, musicSongs)
+      validateFieldsRes = await validateFields(request, musicSongs);
       break;
   }
   if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
@@ -27,6 +31,8 @@ export async function doRequest(functionName, request) {
   switch (functionName) {
     case "getPlaylist":
       return getPlaylist(request, loggedInRes.user);
+    case "getPlaylistHistory":
+      return getPlaylistHistory(request, loggedInRes.user);
     case "createPlaylist":
       return createPlaylist(request, loggedInRes.user);
     case "updatePlaylist":
@@ -48,14 +54,17 @@ export async function doRequest(functionName, request) {
 }
 
 async function checkForRequiredfields(request, design) {
-  let response = "Required field(s) is missing in body: ";
+  let response = "Required field(s) is missing in body or query: ";
   Object.keys(design).forEach(function (key) {
-    if (design[key].required[request.method] === true) {
+    if (design[key].hasOwnProperty("required") && design[key].required[request.method] === true) {
       if (!request.body.hasOwnProperty(key)) response += key + ", ";
+    }
+    if (design[key].hasOwnProperty("queryRequired") && design[key].queryRequired[request.method] === true) {
+      if (!request.query.hasOwnProperty(key)) response += key + ", ";
     }
   });
   // bad code but return is dumb in foreach loops
-  if (response !== "Required field(s) is missing in body: ") return { statuscode: 400, message: response };
+  if (response !== "Required field(s) is missing in body or query: ") return { statuscode: 400, message: response.slice(0, -2) };
   return { statuscode: 200, message: "All required fields found" };
 }
 
@@ -127,6 +136,15 @@ export async function getUniqueFields(fields, design) {
   return fields;
 }
 
+export async function getObjectDiffs(object1, object2) {
+  const res = {};
+  Object.keys(object1).forEach(function (key) {
+    if (object1[key] !== object2[key]) {
+      res[key] = object2[key];
+    }
+  });
+  return res;
+}
 /* if ((await sys.getUserPermissions(req.session.user)) === false) {
   res.send({ statuscode: 401, message: "Not Authorized" });
   return;

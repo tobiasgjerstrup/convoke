@@ -180,6 +180,10 @@ app.get("/api/v1/music/playlists", async (req, res) => {
   res.send(await functions.doRequest('getPlaylist', req));
 });
 
+app.get("/api/v1/music/playlists/history", async (req, res) => {
+  res.send(await functions.doRequest('getPlaylistHistory', req));
+});
+
 app.post("/api/v1/music/songs", async (req, res) => {
   res.send(await functions.doRequest('createSong', req));
 });

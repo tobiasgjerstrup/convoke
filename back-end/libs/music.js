@@ -54,7 +54,7 @@ export async function disablePlaylist(request, user) {
 
   const playlistToUpdate = await mysql.SELECT("musicPlaylists", { id: body.id, active: 1 });
   if (!playlistToUpdate[0][0]) return { statuscode: 400, message: "a playlist with that id doesn't exist or it's already disabled" };
- 
+
   body.active = 0;
   body.lastModifiedBy = user;
 
@@ -71,6 +71,19 @@ export async function getPlaylist(request, user) {
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
 
   return { statuscode: 200, message: "playlist(s) found", data: playlistsWithName[0] };
+}
+
+export async function getPlaylistHistory(request, user) {
+  const playlistsWithName = await mysql.SELECT("musicPlaylistsHistory", request.query, "ORDER BY lastModifiedOn");
+  if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
+
+  const responseObject = { 0: playlistsWithName[0][0] };
+
+  for (let i = 1; i < playlistsWithName[0].length; i++) {
+    responseObject[i] = await functions.getObjectDiffs(playlistsWithName[0][i - 1], playlistsWithName[0][i]);
+  }
+
+  return { statuscode: 200, message: "playlist(s) found", data: responseObject };
 }
 //#endregion
 //#region Songs

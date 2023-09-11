@@ -78,6 +78,15 @@ export const musicPlaylists = {
   },
 };
 
+export const musicPlaylistsHistory = {
+  id: {
+    type: "number",
+    queryRequired: { // required in query
+      GET: true,
+    },
+  },
+};
+
 export const musicSongs = {
   id: {
     type: "number",
