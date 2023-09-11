@@ -1,12 +1,24 @@
 import * as sys from "../system.js";
 import { createPlaylist, createSong, disablePlaylist, disableSong, getPlaylist, getSong, updatePlaylist, updateSong } from "./music.js";
 import * as mysql from "./mysql.js";
+import { musicPlaylists, musicSongs } from "../design/music.js";
 
 export async function doRequest(functionName, request) {
   const loggedInRes = await checkLoggedIn(request);
   if (loggedInRes.statuscode !== 200) {
     return loggedInRes;
   }
+
+  let requiredFieldsRes = "";
+  switch (request.route.path) {
+    case "/api/v1/music/playlists":
+      requiredFieldsRes = await checkForRequiredfields(request, musicPlaylists);
+      break;
+    case "/api/v1/music/songs":
+      requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
+      break;
+  }
+  if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
 
   switch (functionName) {
     case "getPlaylist":
@@ -29,6 +41,18 @@ export async function doRequest(functionName, request) {
       console.error(functionName + " does not exist");
       break;
   }
+}
+
+async function checkForRequiredfields(request, design) {
+  let response = "Required field(s) is missing in body: ";
+  Object.keys(design).forEach(function (key) {
+    if (design[key].required[request.method] === true) {
+      if (!request.body.hasOwnProperty(key)) response += key + ", ";
+    }
+  });
+  // bad code but return is dumb in foreach loops
+  if (response !== "Required field(s) is missing in body ") return { statuscode: 400, message: response };
+  return { statuscode: 200, message: "All required fields found" };
 }
 
 async function checkCookieBypass(req) {
