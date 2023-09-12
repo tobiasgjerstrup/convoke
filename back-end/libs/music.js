@@ -77,9 +77,11 @@ export async function getPlaylistHistory(request, user) {
   const playlistsWithName = await mysql.SELECT("musicPlaylistsHistory", request.query);
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
 
-  const responseObject = { 0: playlistsWithName[0][0] };
+  const responseObject = [playlistsWithName[0][0]];
 
   for (let i = 1; i < playlistsWithName[0].length; i++) {
+    if (playlistsWithName[0][i].hasOwnProperty("createdOn")) delete playlistsWithName[0][i].createdOn;
+    if (playlistsWithName[0][i].hasOwnProperty("lastModifiedOn")) delete playlistsWithName[0][i].lastModifiedOn;
     responseObject[i] = await functions.getObjectDiffs(playlistsWithName[0][i - 1], playlistsWithName[0][i]);
   }
 

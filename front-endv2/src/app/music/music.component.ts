@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { httpService } from '../../services/http-service.service';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { playlist, song } from 'src/interfaces/music';
-import { Obj } from '@popperjs/core';
 
 @Component({
   selector: 'app-music',
@@ -19,6 +18,7 @@ export class MusicComponent {
     private httpService: httpService,
     private modalService: NgbModal
   ) {}
+  @ViewChild('history') history: any;
 
   closeResult = '';
   playlists = Array();
@@ -43,6 +43,7 @@ export class MusicComponent {
     addedBy: '',
     active: 1,
   };
+  playlistHistory:any = Array()
 
   ngOnInit() {
     this.getPlaylists();
@@ -84,6 +85,19 @@ export class MusicComponent {
             this.saveFields();
           } else if (result === 'Delete click') {
             this.deactivatePlaylist();
+          } else if (result === 'History click') {
+            this.httpService
+              .get(
+                environment.apiUrl +
+                  'api/v1/music/playlists/history?id=' +
+                  this.selectedPlaylist.id
+              )
+              .subscribe((response: any) => {
+                if (response.statuscode === 200) {
+                  this.modalService.open(this.history);
+                  this.playlistHistory = response;
+                }
+              });
           }
         },
         (reason) => {
@@ -168,7 +182,7 @@ export class MusicComponent {
   createPlaylist() {
     this.httpService
       .post(environment.apiUrl + 'api/v1/music/playlists', {
-        name: 'New Playlist ' + Math.floor(Math.random() * 100000000 + 1)
+        name: 'New Playlist ' + Math.floor(Math.random() * 100000000 + 1),
       })
       .subscribe((response) => {
         console.log(response);
@@ -179,7 +193,7 @@ export class MusicComponent {
   deactivatePlaylist() {
     this.httpService
       .delete(environment.apiUrl + 'api/v1/music/playlists', {
-        id: this.selectedPlaylist.id
+        id: this.selectedPlaylist.id,
       })
       .subscribe((response) => {
         console.log(response);
@@ -197,7 +211,7 @@ export class MusicComponent {
     });
   }
 
-  fieldFocused(value: string, event: any){
+  fieldFocused(value: string, event: any) {
     event.target.value = value;
   }
 

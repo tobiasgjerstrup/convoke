@@ -53,12 +53,32 @@
 		</form>
 	</div>
 	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-warning" (click)="modal.close('History click')">History</button>
 		<button type="button" class="btn btn-outline-danger" (click)="modal.close('Delete click')">Delete</button>
 		<button type="button" class="btn btn-outline-success" (click)="modal.close('Save click')">Save</button>
 	</div>
 </ng-template>
 	<button class="btn btn-lg btn-outline-success" (click)="createPlaylist()">Create Playlist</button>
 
+
+<ng-template #history let-modal>
+	<div class="modal-header">
+		<span>{{selectedPlaylist.name}}</span>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form>
+		<label>History:</label>
+		<div class="mb-3" *ngFor="let history of playlistHistory.data.reverse()">
+			<div class="modal-highlight">
+				<p *ngFor="let element of history | keyvalue">{{element.key}} - {{element.value }}</p>
+			</div>
+		</div>
+		</form>
+	</div>
+	<div class="modal-footer">	
+	</div>
+	</ng-template>
 <!-- 	
 	<button class="btn btn-lg btn-outline-success">gay</button>
 	<button class="btn btn-lg btn-outline-warning">gay</button>
