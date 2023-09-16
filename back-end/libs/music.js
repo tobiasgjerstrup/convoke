@@ -80,22 +80,33 @@ export async function getPlaylistHistory(request, user) {
   const responseObject = [playlistsWithName[0][0]];
 
   for (let i = 1; i < playlistsWithName[0].length; i++) {
-    if (playlistsWithName[0][i].hasOwnProperty("createdOn")) delete playlistsWithName[0][i].createdOn;
-    if (playlistsWithName[0][i].hasOwnProperty("lastModifiedOn")) delete playlistsWithName[0][i].lastModifiedOn;
     responseObject[i] = await functions.getObjectDiffs(playlistsWithName[0][i - 1], playlistsWithName[0][i]);
   }
 
-  return { statuscode: 200, message: "playlist(s) found", data: responseObject };
+  const songsHistory = await mysql.SELECT("musicSongsHistory", { playlist: request.query.id });
+  responseObject[responseObject.length] = songsHistory[0][0];
+  for (let i = 1; i < songsHistory[0].length; i++) {
+    responseObject[responseObject.length] = await functions.getObjectDiffs(songsHistory[0][i - 1], songsHistory[0][i], { lastModifiedOn: true });
+  }
+
+  for (let i = 0; i < responseObject.length; i++) {
+    if (responseObject[i].hasOwnProperty("lastModifiedOn")) {
+      responseObject[i].dateModified = responseObject[i].lastModifiedOn;
+      delete responseObject[i].lastModifiedOn;
+    }
+  }
+  return {
+    statuscode: 200,
+    message: "playlist(s) found",
+    data: responseObject.sort((a, b) => {
+      return new Date(b.dateModified) - new Date(a.dateModified);
+    }),
+  };
 }
 //#endregion
 //#region Songs
 export async function createSong(request, user) {
   const body = request.body;
-
-  const validation = await functions.validateFields(request.body, musicSongs);
-  if (validation.statuscode !== 200) {
-    return validation;
-  }
 
   if (body.name.length > 255) return { statuscode: 400, message: "field 'name' exceeded the character limit of 255" };
 

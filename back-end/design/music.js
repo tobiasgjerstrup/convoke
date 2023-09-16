@@ -5,7 +5,7 @@ export const musicPlaylists = {
     unique: true,
     required: {
       GET: false,
-      POST: true,
+      POST: false,
       PUT: true,
       DELETE: true,
     },
@@ -94,9 +94,9 @@ export const musicSongs = {
     unique: true,
     required: {
       GET: false,
-      POST: true,
-      PUT: true,
-      DELETE: true,
+      POST: false,
+      PUT: false,
+      DELETE: false,
     },
   },
   playlist: {
@@ -107,7 +107,7 @@ export const musicSongs = {
       GET: false,
       POST: true,
       PUT: false,
-      DELETE: false,
+      DELETE: true,
     },
   },
   name: {

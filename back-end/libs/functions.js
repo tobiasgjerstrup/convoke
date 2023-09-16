@@ -136,11 +136,14 @@ export async function getUniqueFields(fields, design) {
   return fields;
 }
 
-export async function getObjectDiffs(object1, object2) {
+export async function getObjectDiffs(object1, object2, ignoreObject = {}) {
   const res = {};
   Object.keys(object1).forEach(function (key) {
-    if (object1[key] !== object2[key]) {
+    if (JSON.stringify(object1[key]) !== JSON.stringify(object2[key]) || ignoreObject.hasOwnProperty(key)) {
       res[key] = object2[key];
+      // console.log(object1[key] + ' is not same as ' + object2[key])
+    } else {
+      // console.log(object1[key] + ' is the same as ' + object2[key])
     }
   });
   return res;
