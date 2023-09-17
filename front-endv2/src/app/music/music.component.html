@@ -69,9 +69,15 @@
 	<div class="modal-body">
 		<form>
 		<label>History:</label>
-		<div class="mb-3" *ngFor="let history of playlistHistory.data.reverse()">
+		<div class="mb-3" *ngFor="let history of playlistHistory.data">
 			<div class="modal-highlight">
-				<p *ngFor="let element of history | keyvalue">{{element.key}} - {{element.value }}</p>
+				<p>Changed on {{history.dateModified}}</p>
+				<p>Changed by: {{history.lastModifiedBy}}</p>
+				<p>{{history.dataType}} id: {{history.id}}</p>
+				<hr>
+				<ng-container *ngFor="let element of history | keyvalue">
+					<p *ngIf="element.key !== 'dataType' && element.key !== 'lastModifiedBy' && element.key !== 'id' && element.key !== 'dateModified'">{{element.key}} - {{element.value }}</p>
+				</ng-container>
 			</div>
 		</div>
 		</form>

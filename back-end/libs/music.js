@@ -78,20 +78,27 @@ export async function getPlaylistHistory(request, user) {
   if (!playlistsWithName[0][0]) return { statuscode: 400, message: "no playlist found" };
 
   const responseObject = [playlistsWithName[0][0]];
+  responseObject[0].dataType = "playlist";
 
   for (let i = 1; i < playlistsWithName[0].length; i++) {
-    responseObject[i] = await functions.getObjectDiffs(playlistsWithName[0][i - 1], playlistsWithName[0][i]);
+    responseObject[i] = await functions.getObjectDiffs(playlistsWithName[0][i - 1], playlistsWithName[0][i], { lastModifiedOn: true, lastModifiedBy: true, id: true });
+    responseObject[i].dataType = "playlist";
   }
 
   const songsHistory = await mysql.SELECT("musicSongsHistory", { playlist: request.query.id });
   responseObject[responseObject.length] = songsHistory[0][0];
+  responseObject[responseObject.length - 1].dataType = "song ";
   for (let i = 1; i < songsHistory[0].length; i++) {
-    responseObject[responseObject.length] = await functions.getObjectDiffs(songsHistory[0][i - 1], songsHistory[0][i], { lastModifiedOn: true });
+    responseObject[responseObject.length] = await functions.getObjectDiffs(songsHistory[0][i - 1], songsHistory[0][i], { lastModifiedOn: true, lastModifiedBy: true, id: true });
+    responseObject[responseObject.length - 1].dataType = "song";
   }
 
   for (let i = 0; i < responseObject.length; i++) {
     if (responseObject[i].hasOwnProperty("lastModifiedOn")) {
-      responseObject[i].dateModified = responseObject[i].lastModifiedOn;
+      responseObject[i].dateModified = responseObject[i].lastModifiedOn
+        .toISOString()
+        .replace(/T/, " ") // replace T with a space
+        .replace(/\..+/, ""); // delete the dot and everything after;
       delete responseObject[i].lastModifiedOn;
     }
   }
