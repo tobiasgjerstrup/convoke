@@ -204,6 +204,25 @@ app.get("/api/v1/user", async(req, res) => {
   res.send( await functions.checkLoggedIn(req) );
 });
 
+app.get("/api/v1/user/users/history", async (req, res) => {
+  res.send(await functions.doRequest('getUserHistory', req));
+});
+
+app.post("/api/v1/user/users", async (req, res) => {
+  res.send(await functions.doRequest('createUser', req));
+});
+
+app.put("/api/v1/user/users", async (req, res) => {
+  res.send(await functions.doRequest('updateUser', req));
+});
+
+app.delete("/api/v1/user/users", async (req, res) => {
+  res.send(await functions.doRequest('disableUser', req));
+});
+
+app.get("/api/v1/user/users", async (req, res) => {
+  res.send(await functions.doRequest('getUser', req));
+});
 app.listen(8080);
 
 

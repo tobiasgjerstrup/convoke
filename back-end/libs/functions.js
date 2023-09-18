@@ -9,8 +9,8 @@ export async function doRequest(functionName, request) {
     return loggedInRes;
   }
 
-  let requiredFieldsRes = "";
-  let validateFieldsRes = "";
+  let requiredFieldsRes = { statuscode: 500 };
+  let validateFieldsRes = { statuscode: 500 };
   switch (request.route.path) {
     case "/api/v1/music/playlists":
       requiredFieldsRes = await checkForRequiredfields(request, musicPlaylists);
@@ -23,6 +23,10 @@ export async function doRequest(functionName, request) {
     case "/api/v1/music/songs":
       requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
       validateFieldsRes = await validateFields(request, musicSongs);
+      break;
+    default:
+      requiredFieldsRes.statuscode = 200;
+      validateFieldsRes.statuscode = 200;
       break;
   }
   if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
@@ -49,6 +53,7 @@ export async function doRequest(functionName, request) {
       return disableSong(request, loggedInRes.user);
     default:
       console.error(functionName + " does not exist");
+      return { statuscode: 404, message: functionName + " does not exist" };
       break;
   }
 }
