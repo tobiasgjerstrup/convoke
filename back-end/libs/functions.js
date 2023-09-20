@@ -2,6 +2,8 @@ import * as sys from "../system.js";
 import { createPlaylist, createSong, disablePlaylist, disableSong, getPlaylist, getPlaylistHistory, getSong, updatePlaylist, updateSong } from "./music.js";
 import * as mysql from "./mysql.js";
 import { musicPlaylists, musicPlaylistsHistory, musicSongs } from "../design/music.js";
+import { createUser, disableUser, getUser, updateUser } from "./user.js";
+import { userUsers } from "../design/user.js";
 
 export async function doRequest(functionName, request) {
   const loggedInRes = await checkLoggedIn(request);
@@ -23,6 +25,10 @@ export async function doRequest(functionName, request) {
     case "/api/v1/music/songs":
       requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
       validateFieldsRes = await validateFields(request, musicSongs);
+      break;
+    case "/api/v1/user/users":
+      requiredFieldsRes = await checkForRequiredfields(request, userUsers);
+      validateFieldsRes = await validateFields(request, userUsers);
       break;
     default:
       requiredFieldsRes.statuscode = 200;
@@ -51,6 +57,14 @@ export async function doRequest(functionName, request) {
       return updateSong(request, loggedInRes.user);
     case "disableSong":
       return disableSong(request, loggedInRes.user);
+    case "getUser":
+      return getUser(request, loggedInRes.user);
+    case "createUser":
+      return createUser(request, loggedInRes.user);
+    case "updateUser":
+      return updateUser(request, loggedInRes.user);
+    case "disableUser":
+      return disableUser(request, loggedInRes.user);
     default:
       console.error(functionName + " does not exist");
       return { statuscode: 404, message: functionName + " does not exist" };
@@ -115,11 +129,18 @@ export async function checkLoggedIn(req) {
 export async function validateFields(fields, design) {
   let unknownKeys = "";
   let wrongTypes = "";
-  Object.keys(fields.body).forEach(function (key) {
+
+  const mergedFields = Object.assign({}, fields.body, fields.query);
+
+  Object.keys(mergedFields).forEach(function (key) {
     if (!design.hasOwnProperty(key)) {
       unknownKeys += key + ", ";
-    } else if (typeof fields.body[key] !== design[key]["type"]) {
-      wrongTypes += key + ", ";
+    } else if (typeof mergedFields[key] !== design[key]["type"]) {
+
+      // if design is a number but we input a string: check if string can be converted to a number
+      if (design[key]["type"] !== "number" || isNaN(mergedFields[key])) {
+        wrongTypes += key + ", ";
+      }
     }
   });
   if (unknownKeys !== "") return { statuscode: 400, message: "unknown key(s) in body: " + unknownKeys.slice(0, -2), schema: design };

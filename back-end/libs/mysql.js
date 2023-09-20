@@ -22,19 +22,31 @@ export async function INSERT(table, insertObject) {
   return true;
 }
 
-export async function SELECT(table, insertObject) {
+export async function SELECT(table, insertObject = {}, fieldsObject = {}) {
   let response;
   let condition = "";
+  let fields = "";
 
   for (const [key, value] of Object.entries(insertObject)) {
     condition += `\`${key}\``;
     if (typeof value !== "string") condition += ` = '${value}' AND `;
     else condition += ` = '${value.replaceAll("'", "''")}' AND `;
   }
+
+  for (const [key, value] of Object.entries(fieldsObject)) {
+    if (value === true) fields = fields + `${key}, `;
+  }
+
+  if (fields === "") {
+    fields = "*";
+  } else {
+    fields = fields.slice(0, -2);
+  }
+
   condition = condition.slice(0, -5);
   let WHERE = "";
   if (condition) WHERE = "WHERE";
-  response = await connection.query(`SELECT * FROM ${table} ${WHERE} ${condition}`);
+  response = await connection.query(`SELECT ${fields} FROM ${table} ${WHERE} ${condition}`);
   return response;
 }
 
