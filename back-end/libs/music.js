@@ -17,31 +17,7 @@ export async function createPlaylist(request, user) {
 }
 
 export async function updatePlaylist(request, user) {
-  const body = request.body;
-
-  const playlistToUpdate = await mysql.SELECT("musicPlaylists", { id: body.id });
-  if (!playlistToUpdate[0][0]) return { statuscode: 400, message: "a playlist with that id doesn't exist" };
-
-  const bodyWriteable = JSON.parse(JSON.stringify(body)); // objects parsed into a function will be modified by the function. No idea why
-  await functions.getWritableFields(bodyWriteable, musicPlaylists);
-  const bodyWriteableUnique = JSON.parse(JSON.stringify(bodyWriteable));
-  await functions.getUniqueFields(bodyWriteableUnique, musicPlaylists);
-
-  if (Object.keys(bodyWriteable).length === 0) {
-    return { statuscode: 400, message: "body does not contain any writeable fields", schema: musicPlaylists };
-  }
-
-  bodyWriteable.id = body.id; // add ID since it's required for checking changes & updating
-
-  const noChanges = await mysql.SELECT("musicPlaylists", bodyWriteable);
-  if (noChanges[0][0]) return { statuscode: 400, message: "No changes" };
-
-  const sameBody = await mysql.SELECTAll("musicPlaylists", bodyWriteableUnique);
-  if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
-
-  bodyWriteable.lastModifiedBy = user; // add ID since it's required for checking changes & updating
-
-  const response = await mysql.UPDATE("musicPlaylists", bodyWriteable);
+  const response = await mysql.UPDATE("musicPlaylists", request.body);
   if (response.statuscode !== 200) {
     return response;
   }
@@ -125,31 +101,7 @@ export async function createSong(request, user) {
 }
 
 export async function updateSong(request, user) {
-  const body = request.body;
-
-  const songToUpdate = await mysql.SELECT("musicSongs", { id: body.id });
-  if (!songToUpdate[0][0]) return { statuscode: 400, message: "a song with that id doesn't exist" };
-
-  const bodyWriteable = JSON.parse(JSON.stringify(body)); // objects parsed into a function will be modified by the function. No idea why
-  await functions.getWritableFields(bodyWriteable, musicSongs);
-  const bodyWriteableUnique = JSON.parse(JSON.stringify(bodyWriteable));
-  await functions.getUniqueFields(bodyWriteableUnique, musicSongs);
-
-  if (Object.keys(bodyWriteable).length === 0) {
-    return { statuscode: 400, message: "body does not contain any writeable fields", schema: musicSongs };
-  }
-
-  bodyWriteable.id = body.id; // add ID since it's required for checking changes & updating
-
-  const noChanges = await mysql.SELECT("musicSongs", bodyWriteable);
-  if (noChanges[0][0]) return { statuscode: 400, message: "No changes" };
-
-  const sameBody = await mysql.SELECTAll("musicSongs", bodyWriteableUnique);
-  if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
-
-  bodyWriteable.lastModifiedBy = user; // add ID since it's required for checking changes & updating
-
-  const response = await mysql.UPDATE("musicSongs", bodyWriteable);
+  const response = await mysql.UPDATE("musicSongs", request.body);
   if (response.statuscode !== 200) {
     return response;
   }

@@ -11,32 +11,26 @@ export async function doRequest(functionName, request) {
     return loggedInRes;
   }
 
-  let requiredFieldsRes = { statuscode: 500 };
-  let validateFieldsRes = { statuscode: 500 };
+  let validateRequestRes = { statuscode: 500 };
   switch (request.route.path) {
     case "/api/v1/music/playlists":
-      requiredFieldsRes = await checkForRequiredfields(request, musicPlaylists);
-      validateFieldsRes = await validateFields(request, musicPlaylists);
+      validateRequestRes = await validateRequest(request, musicPlaylists, "musicPlaylists", loggedInRes.user);
       break;
     case "/api/v1/music/playlists/history":
-      requiredFieldsRes = await checkForRequiredfields(request, musicPlaylistsHistory);
-      validateFieldsRes = await validateFields(request, musicPlaylistsHistory);
+      validateRequestRes = await validateRequest(request, musicPlaylistsHistory, "musicPlaylistHistory", loggedInRes.user);
       break;
     case "/api/v1/music/songs":
-      requiredFieldsRes = await checkForRequiredfields(request, musicSongs);
-      validateFieldsRes = await validateFields(request, musicSongs);
+      validateRequestRes = await validateRequest(request, musicSongs, "musicSongs", loggedInRes.user);
       break;
     case "/api/v1/user/users":
-      requiredFieldsRes = await checkForRequiredfields(request, userUsers);
-      validateFieldsRes = await validateFields(request, userUsers);
+      validateRequestRes = await validateRequest(request, userUsers, "users", loggedInRes.user);
       break;
     default:
-      requiredFieldsRes.statuscode = 200;
-      validateFieldsRes.statuscode = 200;
+      validateRequestRes.statuscode = 200;
       break;
   }
-  if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
-  if (validateFieldsRes.statuscode !== 200) return validateFieldsRes;
+
+  if (validateRequestRes.statuscode !== 200) return validateRequestRes;
 
   switch (functionName) {
     case "getPlaylist":
@@ -136,7 +130,6 @@ export async function validateFields(fields, design) {
     if (!design.hasOwnProperty(key)) {
       unknownKeys += key + ", ";
     } else if (typeof mergedFields[key] !== design[key]["type"]) {
-
       // if design is a number but we input a string: check if string can be converted to a number
       if (design[key]["type"] !== "number" || isNaN(mergedFields[key])) {
         wrongTypes += key + ", ";
@@ -174,14 +167,42 @@ export async function getObjectDiffs(object1, object2, ignoreObject = {}) {
   });
   return res;
 }
-/* if ((await sys.getUserPermissions(req.session.user)) === false) {
-  res.send({ statuscode: 401, message: "Not Authorized" });
-  return;
-}
 
-if (!req.body.playlist || !req.body.song) {
-  res.send({ statuscode: 200, message: "Missing Body" });
-  return;
+async function validateRequest(request, schema, database, user) {
+  const requiredFieldsRes = await checkForRequiredfields(request, schema);
+  const validateFieldsRes = await validateFields(request, schema);
+
+  if (requiredFieldsRes.statuscode !== 200) return requiredFieldsRes;
+  if (validateFieldsRes.statuscode !== 200) return validateFieldsRes;
+
+  if (request.method === "PUT") {
+    const id = request.body.id;
+    const userToUpdate = await mysql.SELECT(database, { id: request.body.id });
+    if (!userToUpdate[0][0]) return { statuscode: 400, message: "a user with that id doesn't exist" };
+
+    const bodyWriteable = JSON.parse(JSON.stringify(request.body)); // objects parsed into a function will be modified by the function. No idea why
+    await getWritableFields(bodyWriteable, schema);
+    const bodyWriteableUnique = JSON.parse(JSON.stringify(bodyWriteable));
+    await getUniqueFields(bodyWriteableUnique, schema);
+
+    if (Object.keys(bodyWriteable).length === 0) {
+      return { statuscode: 400, message: "body does not contain any writeable fields", schema: schema };
+    }
+
+    const sameBody = await mysql.SELECTAll(database, bodyWriteableUnique);
+    if (Object.keys(bodyWriteableUnique).length !== 0 && ((sameBody[0][0] && sameBody[0][0]["id"] !== request.body.id) || sameBody[0][1])) return { statuscode: 400, message: "a field in the body is not unique" };
+
+    // force id in since its required on all PUTS
+    bodyWriteable.id = id;
+
+    const noChanges = await mysql.SELECT(database, bodyWriteable);
+    if (noChanges[0][0]) return { statuscode: 400, message: "No changes" };
+
+    request.body = bodyWriteable;
+
+    // force extra fields in
+    request.body.lastModifiedBy = user;
+  }
+
+  return { statuscode: 200, message: "validateRequest went well!" };
 }
-const response = sys.deleteDiscordbotPlaylists(req.body);
-res.send({ statuscode: 200, message: response }); */
