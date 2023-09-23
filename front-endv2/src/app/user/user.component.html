@@ -1,0 +1,43 @@
+<div *ngFor="let user of users">
+	<button class="btn btn-lg btn-outline-primary" (click)="open(content, user)">{{ user.nickname }}</button>
+</div>
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+		<h3>{{selectedUser.username}}</h3>
+		<input
+			(focus)="fieldFocused(selectedUser.nickname, $event)"
+			(keyup)="addToField('nickname', $event)"
+			class="form-control"
+			placeholder={{selectedUser.nickname}}
+			name="dp"
+		/>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form>
+			<!-- <label>Songs:</label>
+			<div class="mb-3">
+				<div class="input-group">
+					<input
+						(keyup)="addToField('name', $event)"
+						class="form-control"
+						placeholder='Song Name'	
+						name="dp"
+					/><input
+						(keyup)="addToField('url', $event)"
+						class="form-control"
+						placeholder='Song Url'
+						name="dp"
+					/>
+					<button type="button" class="btn btn-outline-light" (click)="addToField('add', $event)">Add</button>
+				</div>
+			</div> -->
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-outline-warning" (click)="modal.close('History click')">History</button>
+		<button type="button" class="btn btn-outline-danger" (click)="modal.close('Delete click')">Delete</button>
+		<button type="button" class="btn btn-outline-success" (click)="modal.close('Save click')">Save</button>
+	</div>
+</ng-template>

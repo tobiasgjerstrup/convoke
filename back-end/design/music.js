@@ -81,7 +81,8 @@ export const musicPlaylists = {
 export const musicPlaylistsHistory = {
   id: {
     type: "number",
-    queryRequired: { // required in query
+    queryRequired: {
+      // required in query
       GET: true,
     },
   },
@@ -95,8 +96,8 @@ export const musicSongs = {
     required: {
       GET: false,
       POST: false,
-      PUT: false,
-      DELETE: false,
+      PUT: true,
+      DELETE: true,
     },
   },
   playlist: {
