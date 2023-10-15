@@ -29,7 +29,7 @@
 						placeholder='Song Url'
 						name="dp"
 					/>
-					<button type="button" class="btn btn-outline-light" (click)="addToField('add', $event)">Add</button>
+					<button type="button" class="btn btn-outline-light btn-default" (click)="addToField('add', $event)">Add</button>
 				</div>
 				<div class="input-group" *ngFor="let song of modalSongs">
 						<input
@@ -46,8 +46,8 @@
 						placeholder={{song.url}}
 						name="dp"
 						*ngIf="song.active"
-					/><button type="button" class="btn btn-outline-light" *ngIf="song.active" (click)="deactivateSong(song)">Delete</button>
-					<button type="button" class="btn btn-outline-light" *ngIf="!song.active" (click)="reactivateSong(song)">Undo</button>
+					/><button type="button" class="btn btn-outline-light btn-default" *ngIf="song.active" (click)="deactivateSong(song)">Delete</button>
+					<button type="button" class="btn btn-outline-light btn-default" *ngIf="!song.active" (click)="reactivateSong(song)">Undo</button>
 				</div>
 			</div>
 		</form>
