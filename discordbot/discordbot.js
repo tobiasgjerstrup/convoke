@@ -20,9 +20,9 @@ let shrekMessage = null;
 let downloadMessage = null;
 client.on("messageCreate", async (message) => {
   try {
-    if (message.channelId === '858471638398664734'){
-      message.delete();
-    }
+    // if (message.channelId === '858471638398664734'){
+    //   message.delete();
+    // }
     // messageReacted = await client.channels.cache.get('858471638398664734').messages.fetch('1164967664683335770')
     // messageReacted.reactions.removeAll();
     // messageReacted.react("🐸")
