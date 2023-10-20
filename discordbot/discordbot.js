@@ -5,6 +5,7 @@ import * as libs from "../scripts/libs.js";
 import { downloadFromYoutube, getMetaInfoFromYoutubeSearch } from "../scripts/youtube-to-mp3/index.js";
 import fs from "fs";
 import { asciiArt } from "../scripts/config.js";
+import ytpl from "ytpl";
 
 dotenv.config();
 const client = new Client({
@@ -26,7 +27,7 @@ client.on("messageCreate", async (message) => {
     // messageReacted = await client.channels.cache.get('858471638398664734').messages.fetch('1164967664683335770')
     // messageReacted.reactions.removeAll();
     // messageReacted.react("🐸")
-    if (message.author.id === '177525776256598017'){
+    if (message.author.id === "177525776256598017") {
       message.react("👺");
     }
     if (message?.author.bot) {
@@ -147,6 +148,30 @@ client.on("messageCreate", async (message) => {
       data = shuffle(data);
       for (let i = 0; i < data.length; i++) {
         await convokeplaylist(message, data[i].url);
+      }
+    }
+    if (message.content.toLowerCase().startsWith("convokeyoutubeplaylist ")) {
+      if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
+
+      const url = message.content.slice(23);
+      const playlists = await ytpl(url, { limit: 15 });
+      for (const playlist of playlists.items) {
+        const metaData = await getMetaInfoFromYoutubeSearch(playlist.shortUrl);
+        const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
+
+        songs.push(metaData.url);
+        if (!fs.existsSync(OUTPUT)) {
+          console.log("downloading " + metaData.url);
+          await downloadFromYoutube(metaData.url, OUTPUT);
+        }
+        if (songs.length === 1) {
+          connection = joinVoiceChannel({
+            channelId: message.member.voice.channel.id,
+            guildId: message.guild.id,
+            adapterCreator: message.guild.voiceAdapterCreator,
+          });
+          nextSong();
+        }
       }
     }
   } catch (err) {
