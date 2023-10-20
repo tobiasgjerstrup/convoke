@@ -157,6 +157,7 @@ client.on("messageCreate", async (message) => {
       const playlists = await ytpl(url, { limit: 500 });
       for (const playlist of playlists.items) {
         const metaData = await getMetaInfoFromYoutubeSearch(playlist.shortUrl);
+        if (typeof metaData.url !== 'string') continue;
         const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
 
         songs.push(metaData.url);
