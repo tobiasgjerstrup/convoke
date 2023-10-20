@@ -20,6 +20,15 @@ let shrekMessage = null;
 let downloadMessage = null;
 client.on("messageCreate", async (message) => {
   try {
+    if (message.channelId === '858471638398664734'){
+      message.delete();
+    }
+    // messageReacted = await client.channels.cache.get('858471638398664734').messages.fetch('1164967664683335770')
+    // messageReacted.reactions.removeAll();
+    // messageReacted.react("🐸")
+    if (message.author.id === '177525776256598017'){
+      message.react("👺");
+    }
     if (message?.author.bot) {
       return false;
     }
@@ -117,46 +126,6 @@ client.on("messageCreate", async (message) => {
       await delay(200);
       await shrekMessage.edit(asciiArt.shrek);
     }
-    if (message.content.toLowerCase() === "mc mined blocks") {
-      let mcLeaderboard = "Mined Blocks:";
-      const players = await libs.select("production", "mc_players");
-      const mcWorldDir = "../../minecraft-server/world-1.20/stats/";
-      let index = 0;
-      fs.readdir(mcWorldDir, async (err, files) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        files.forEach(async (file) => {
-          await fs.readFile(mcWorldDir + file, "utf8", (err, data) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            let playername = "unknown";
-            Object.keys(players).forEach(function (player) {
-              if (players[player].uuid === file.slice(0, -5)) {
-                playername = players[player].name;
-              }
-            });
-            let blocksMined = 0;
-            index++;
-            if (undefined !== JSON.parse(data).stats["minecraft:mined"]) {
-              const stats = JSON.parse(data).stats["minecraft:mined"];
-              console.log(file);
-              Object.keys(stats).forEach(function (stat) {
-                blocksMined += stats[stat];
-              });
-              mcLeaderboard += `\`\`\`${playername}: ${blocksMined}\`\`\``;
-            }
-
-            if (files.length <= index) {
-              message.channel.send(mcLeaderboard);
-            }
-          });
-        });
-      });
-    }
     if (message.content.toLowerCase() === "convokeradio") {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
       fs.readdir("media/mp3/", async (err, files) => {
@@ -211,7 +180,6 @@ function ifMessageFromUserInVoice(message, errorMsg) {
 
 function playSongFromFile(filename, message) {
   songs.push(filename);
-  console.log(songs);
   if (songs.length === 1) {
     message.channel.send(`\`\`\`now playing ${filename}\`\`\``);
     connection = joinVoiceChannel({
