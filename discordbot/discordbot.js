@@ -154,7 +154,7 @@ client.on("messageCreate", async (message) => {
       if (!ifMessageFromUserInVoice(message, "You can't do that without being in a voicechannel")) return false;
 
       const url = message.content.slice(23);
-      const playlists = await ytpl(url, { limit: 15 });
+      const playlists = await ytpl(url, { limit: 500 });
       for (const playlist of playlists.items) {
         const metaData = await getMetaInfoFromYoutubeSearch(playlist.shortUrl);
         const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
