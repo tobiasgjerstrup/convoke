@@ -1,0 +1,23 @@
+{
+  "name": "discordbotv2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.cjs",
+  "type": "module",
+  "scripts": {
+    "serve": "tsup src/index.ts --watch --onSuccess \"node dist/index.cjs\"",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1"
+  }
+}
