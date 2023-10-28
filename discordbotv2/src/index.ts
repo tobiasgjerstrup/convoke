@@ -25,7 +25,7 @@ client.on("messageCreate", async (message) => {
   switch (command.command) {
     case "convokeplay":
       message.react("🤔");
-      message.channel.send(await convokeplay());
+      message.channel.send(await convokeplay(message, command.param));
       message.delete();
       break;
     case "convokeradio":
