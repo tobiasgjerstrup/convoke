@@ -1,7 +1,7 @@
 mod api;
 
 use actix_web::{middleware::Logger, App, HttpServer};
-use api::task::{get_task, get_task2};
+use api::task::{get_task, get_task2, get_test};
 use rand::Rng;
 use std::{cmp::Ordering, env, io};
 
@@ -41,7 +41,7 @@ async fn bind_web_server(ip: &str, port: u16) -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let logger = Logger::default();
-        App::new().wrap(logger).service(get_task).service(get_task2)
+        App::new().wrap(logger).service(get_task).service(get_task2).service(get_test)
     })
     .bind((ip, port))?
     .run()

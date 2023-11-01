@@ -10,6 +10,7 @@ actix-web = "4.4.0"
 derive_more = "0.99.17"
 env_logger = "0.10.0"
 log = "0.4.20"
+mysql_async = "0.32.2"
 rand = "0.8.5"
 serde = {version = "1.0.190", features = ["derive"]}
 strum = "0.25.0"
