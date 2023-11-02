@@ -3,7 +3,7 @@ mod api;
 use actix_web::{middleware::Logger, App, HttpServer};
 use api::task::{get_task, get_task2, get_test};
 use rand::Rng;
-use std::{cmp::Ordering, env, io};
+use std::{cmp::Ordering, env, fs, io};
 
 #[actix_web::main]
 
@@ -29,6 +29,8 @@ async fn run() {
     } else if args[1] == "guess" {
         let attempts = guessing_game();
         println!("you finished with {attempts} attempts");
+    } else if args[1] == "fs" {
+        let _ = find_file("./", &args[2]);
     } else {
         println!("Invalid argument!");
     }
@@ -41,7 +43,11 @@ async fn bind_web_server(ip: &str, port: u16) -> std::io::Result<()> {
 
     HttpServer::new(move || {
         let logger = Logger::default();
-        App::new().wrap(logger).service(get_task).service(get_task2).service(get_test)
+        App::new()
+            .wrap(logger)
+            .service(get_task)
+            .service(get_task2)
+            .service(get_test)
     })
     .bind((ip, port))?
     .run()
@@ -83,4 +89,31 @@ fn guessing_game() -> u32 {
             }
         }
     }
+}
+
+fn find_file(dir: &str, ff: &str) -> std::io::Result<()> {
+    let paths = fs::read_dir(dir)?;
+
+    for path in paths {
+        let string_path = &path?.path().display().to_string();
+        if is_dir(string_path) {
+            let _ = find_file(string_path, ff);
+        } else {
+            if string_path.contains(ff) {
+                println!("{string_path}");
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn is_dir(path: &str) -> bool {
+    let metadata = fs::metadata(path);
+    let file_type = metadata.unwrap().file_type();
+
+    if file_type.is_dir() {
+        return true;
+    }
+    return false;
 }

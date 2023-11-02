@@ -624,6 +624,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "cv"
+version = "0.1.0"
+dependencies = [
+ "actix-web",
+ "derive_more",
+ "env_logger",
+ "log",
+ "mysql_async",
+ "rand",
+ "serde",
+ "strum",
+ "strum_macros",
+ "uuid",
+]
+
+[[package]]
 name = "darling"
 version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1776,22 +1792,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "rust-wep-api"
-version = "0.1.0"
-dependencies = [
- "actix-web",
- "derive_more",
- "env_logger",
- "log",
- "mysql_async",
- "rand",
- "serde",
- "strum",
- "strum_macros",
- "uuid",
 ]
 
 [[package]]
