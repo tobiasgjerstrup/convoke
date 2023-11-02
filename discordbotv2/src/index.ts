@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
-import { convokeplay } from "./commands.js";
+import { Voice } from "./voice.js";
+import { AudioPlayerStatus } from "@discordjs/voice";
+import { stringify } from "querystring";
 
 dotenv.config();
 
@@ -15,6 +17,8 @@ const client = new Client({
   ],
 });
 
+const voice = new Voice();
+
 client.login(process.env.DISCORD_TOKEN);
 
 client.on("messageCreate", async (message) => {
@@ -22,32 +26,46 @@ client.on("messageCreate", async (message) => {
 
   console.log(command);
 
-  switch (command.command) {
-    case "convokeplay":
-      message.react("🤔");
-      message.channel.send(await convokeplay(message, command.param));
-      message.delete();
-      break;
-    case "convokeradio":
-      message.react("🤔");
-      message.delete();
-      break;
-    case "convokeskip":
-      message.react("🤔");
-      message.delete();
-      break;
-    case "convokeplaylist":
-      message.react("🤔");
-      message.delete();
-      break;
-    case "convokeyoutubeplaylist":
-      message.react("🤔");
-      message.delete();
-      break;
-    case "convokehelp":
-      message.react("🤔");
-      message.delete();
-      break;
+  let res = "";
+  try {
+    switch (command.command) {
+      case ";playfile":
+        await message.react("🤔");
+        res = await voice.convokeplayfile(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";radio":
+        await message.react("🤔");
+        res = await voice.convokeradio(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";skip":
+        await message.react("🤔");
+        res = await voice.convokeskip(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";yt":
+        await message.react("🤔");
+        res = await voice.convokeyoutube(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";list":
+        await message.react("🤔");
+        res = await voice.convokelist();
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";help":
+        await message.react("🤔");
+        message.delete();
+        break;
+    }
+  } catch(error) {
+    message.channel.send(error.message)
   }
 });
 
@@ -63,8 +81,16 @@ function getCommand(message) {
     command.command = message.content.split(" ")[0].toLowerCase();
   }
   if (typeof content[1] === "string") {
-    command.param = message.content.split(" ")[1].toLowerCase();
+    command.param = message.content.split(" ")[1];
   }
 
   return command;
 }
+
+voice.player.on(AudioPlayerStatus.Idle, () => {
+  voice.playing = false;
+  voice.songs.splice(0, 1);
+  if (voice.songs.length > 0) {
+    voice.playSong(voice.songs[0]);
+  }
+});
