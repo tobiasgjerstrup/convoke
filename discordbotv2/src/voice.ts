@@ -70,7 +70,8 @@ export class Voice {
         this.playMusic(message);
       }
     } else {
-      return 'can only handle playlists for now'
+      await this.playAndDownloadFromYt(param);
+      this.playMusic(message);
     }
   }
 
