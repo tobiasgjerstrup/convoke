@@ -29,6 +29,18 @@ client.on("messageCreate", async (message) => {
   let res = "";
   try {
     switch (command.command) {
+      case ";current":
+        await message.react("🤔");
+        res = await voice.convokecurrent(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case ";showfiles":
+        await message.react("🤔");
+        res = await voice.convokeshowfile(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
       case ";playfile":
         await message.react("🤔");
         res = await voice.convokeplayfile(message, command.param);
@@ -61,6 +73,8 @@ client.on("messageCreate", async (message) => {
         break;
       case ";help":
         await message.react("🤔");
+        res = await voice.convokehelp(message, command.param);
+        if (res) message.channel.send(res);
         message.delete();
         break;
     }

@@ -10,13 +10,14 @@ import {
   downloadFromYoutube,
   getMetaInfoFromYoutubeSearch,
 } from "../../scripts/youtube-to-mp3/index.js";
+import { stringify } from "querystring";
 
 export class Voice {
   public player: any;
   public songs: Array<String> = [];
   public playing = false;
   private connection: any;
-  
+
   public constructor() {
     this.player = createAudioPlayer();
   }
@@ -28,11 +29,29 @@ export class Voice {
 
     const mediaFiles = await fs.readdir("media/mp3");
 
-    for (let i = 0; i < Number(param); i++) {
+    let radioAmount = 1;
+    if (Number(param) > 0) radioAmount = Number(param);
+    for (let i = 0; i < radioAmount; i++) {
       const random = Math.floor(Math.random() * mediaFiles.length);
       this.songs[this.songs.length] = mediaFiles[random];
     }
     this.playMusic(message);
+  }
+
+  public async convokehelp(message, param) {
+    return `\`\`\`
+;radio [number]
+;skip [number]
+;yt [youtubeLink]
+;playfile [filename]
+;showfiles
+;list
+;current\`\`\`
+    `;
+  }
+
+  public async convokecurrent(message, param) {
+    return `https://www.youtube.com/watch?v=${this.songs[0]}`
   }
 
   public async convokeplayfile(message, param) {
@@ -40,7 +59,13 @@ export class Voice {
       return `You can't use that command without being in a voice channel`;
 
     this.songs[this.songs.length] = param;
-    this.playMusic(message);
+    this.playMusic(message, `media/mp3custom/`);
+  }
+
+  public async convokeshowfile(message, param) {
+    const mediaFiles = await fs.readdir("media/mp3custom");
+
+    return JSON.stringify(mediaFiles);
   }
 
   public async convokeskip(message, param) {
@@ -75,7 +100,7 @@ export class Voice {
     }
   }
 
-  public async convokelist(){
+  public async convokelist() {
     return `current playing ${this.songs.length} songs`;
   }
 
@@ -84,16 +109,17 @@ export class Voice {
     if (typeof metaData.url !== "string") return;
     const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
 
-    this.songs[this.songs.length] = metaData.url.split("watch?v=").pop() + ".mp3";
+    this.songs[this.songs.length] =
+      metaData.url.split("watch?v=").pop() + ".mp3";
     if (!fss.existsSync(OUTPUT)) {
       await downloadFromYoutube(metaData.url, OUTPUT);
     }
   }
 
-  private playMusic(message: any) {
+  private playMusic(message: any, folder = `media/mp3/`) {
     this.joinVoice(message);
     if (this.playing === false && this.songs.length > 0) {
-      this.playSong(this.songs[0]);
+      this.playSong(this.songs[0], folder);
     }
   }
 
@@ -106,8 +132,8 @@ export class Voice {
     });
   }
 
-  public playSong(param: String) {
-    const resource = createAudioResource(`media/mp3/${param}`);
+  public playSong(param: String, folder = `media/mp3/`) {
+    const resource = createAudioResource(`${folder}${param}`);
     this.player.play(resource);
     this.connection.subscribe(this.player);
     this.playing = true;
