@@ -99,6 +99,27 @@ export class Voice {
       this.playMusic(message);
     }
   }
+  
+  public async convokeyoutubenext(message, param: string) {
+    return `TODO`
+    if (message.member.voice.channel === null)
+      return `You can't use that command without being in a voice channel`;
+
+    if (!param.includes("https://www.youtube.com/watch?v="))
+      return `that's not a valid youtube URL`;
+
+    if (param.includes("&list=")) {
+      // ytpl's first param is case sensitive
+      const playlists = await ytpl(param, { limit: 10000 });
+      for (const playlist of playlists.items) {
+        await this.playAndDownloadFromYt(playlist.shortUrl);
+        this.playMusic(message);
+      }
+    } else {
+      await this.playAndDownloadFromYt(param);
+      this.playMusic(message);
+    }
+  }
 
   public async convokelist() {
     return `current playing ${this.songs.length} songs`;

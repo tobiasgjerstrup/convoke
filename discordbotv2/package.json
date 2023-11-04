@@ -2,7 +2,7 @@
   "name": "discordbotv2",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "serve": "tsup src/index.ts --watch --onSuccess \"node dist/index.cjs\"",

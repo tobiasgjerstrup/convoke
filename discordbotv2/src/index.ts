@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import { Voice } from "./voice.js";
 import { AudioPlayerStatus } from "@discordjs/voice";
-import { stringify } from "querystring";
 
 dotenv.config();
 
@@ -29,57 +28,63 @@ client.on("messageCreate", async (message) => {
   let res = "";
   try {
     switch (command.command) {
-      case ";current":
+      case `${process.env.PREFIX}current`:
         await message.react("🤔");
         res = await voice.convokecurrent(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";showfiles":
+      case `${process.env.PREFIX}showfiles`:
         await message.react("🤔");
         res = await voice.convokeshowfile(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";playfile":
+      case `${process.env.PREFIX}playfile`:
         await message.react("🤔");
         res = await voice.convokeplayfile(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";radio":
+      case `${process.env.PREFIX}radio`:
         await message.react("🤔");
         res = await voice.convokeradio(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";skip":
+      case `${process.env.PREFIX}skip`:
         await message.react("🤔");
         res = await voice.convokeskip(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";yt":
+      case `${process.env.PREFIX}yt`:
         await message.react("🤔");
         res = await voice.convokeyoutube(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";list":
+      case `${process.env.PREFIX}ytnext`:
+        await message.react("🤔");
+        res = await voice.convokeyoutubenext(message, command.param);
+        if (res) message.channel.send(res);
+        message.delete();
+        break;
+      case `${process.env.PREFIX}list`:
         await message.react("🤔");
         res = await voice.convokelist();
         if (res) message.channel.send(res);
         message.delete();
         break;
-      case ";help":
+      case `${process.env.PREFIX}help`:
         await message.react("🤔");
         res = await voice.convokehelp(message, command.param);
         if (res) message.channel.send(res);
         message.delete();
         break;
     }
-  } catch(error) {
-    message.channel.send(error.message)
+  } catch (error) {
+    message.channel.send(error.message);
   }
 });
 
