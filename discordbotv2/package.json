@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "serve": "tsup src/index.ts --watch --onSuccess \"node dist/index.cjs\"",
-    "build": "tsc"
+    "build": "tsc",
+    "pm2": "pm2 start \"node .\" --name \"discordbot\" -- run start --watch"
   },
   "keywords": [],
   "author": "",
