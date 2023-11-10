@@ -6,6 +6,7 @@ import {
 import * as fs from "fs/promises";
 import * as fss from "fs";
 import ytpl from "ytpl";
+import ytdl from "ytdl-core";
 import {
   downloadFromYoutube,
   getMetaInfoFromYoutubeSearch,

@@ -22,7 +22,7 @@ client.login(process.env.DISCORD_TOKEN);
 
 client.on("messageCreate", async (message) => {
   const command = getCommand(message);
-
+  
   console.log(command);
 
   let res = "";
