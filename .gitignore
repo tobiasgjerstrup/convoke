@@ -16,3 +16,5 @@ scripts/youtube-to-mp3/node_modules*
 discordbot/node_modules*
 discordbot/.env
 discordbot/media/mp3
+
+sandbox/

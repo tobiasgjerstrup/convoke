@@ -7,11 +7,6 @@ import * as fs from "fs/promises";
 import * as fss from "fs";
 import ytpl from "ytpl";
 import ytdl from "ytdl-core";
-import {
-  downloadFromYoutube,
-  getMetaInfoFromYoutubeSearch,
-} from "../../scripts/youtube-to-mp3/index.js";
-import { stringify } from "querystring";
 
 export class Voice {
   public player: any;
@@ -52,7 +47,7 @@ export class Voice {
   }
 
   public async convokecurrent(message, param) {
-    return `https://www.youtube.com/watch?v=${this.songs[0]}`
+    return `https://www.youtube.com/watch?v=${this.songs[0]}`;
   }
 
   public async convokeplayfile(message, param) {
@@ -100,9 +95,9 @@ export class Voice {
       this.playMusic(message);
     }
   }
-  
+
   public async convokeyoutubenext(message, param: string) {
-    return `TODO`
+    return `TODO`;
     if (message.member.voice.channel === null)
       return `You can't use that command without being in a voice channel`;
 
@@ -127,14 +122,17 @@ export class Voice {
   }
 
   private async playAndDownloadFromYt(url: string) {
-    const metaData = await getMetaInfoFromYoutubeSearch(url);
-    if (typeof metaData.url !== "string") return;
-    const OUTPUT = "media/mp3/" + metaData.url.split("watch?v=").pop() + ".mp3";
+    const metaData = await this.getMetaInfoFromYoutubeUrl(url);
+    if (typeof metaData.videoDetails.video_url !== "string") return;
+    const OUTPUT =
+      "media/mp3/" +
+      metaData.videoDetails.video_url.split("watch?v=").pop() +
+      ".mp3";
 
     this.songs[this.songs.length] =
-      metaData.url.split("watch?v=").pop() + ".mp3";
+      metaData.videoDetails.video_url.split("watch?v=").pop() + ".mp3";
     if (!fss.existsSync(OUTPUT)) {
-      await downloadFromYoutube(metaData.url, OUTPUT);
+      await this.downloadFromYoutube(metaData, OUTPUT);
     }
   }
 
@@ -159,5 +157,31 @@ export class Voice {
     this.player.play(resource);
     this.connection.subscribe(this.player);
     this.playing = true;
+  }
+
+  private async getMetaInfoFromYoutubeUrl(url: string) {
+    try {
+      return await ytdl.getInfo(url);
+    } catch (err) {
+      // we dont console err because this fails often. Should probably add some retries on this one
+      console.log(err);
+    }
+  }
+
+  private async downloadFromYoutube(metainfo: any, output: string) {
+    try {
+      await new Promise<void>((resolve) => {
+        ytdl(metainfo.videoDetails.video_url, {
+          quality: "highestaudio",
+          filter: "audioonly",
+        }).pipe(
+          fss.createWriteStream(output).on("finish", () => {
+            resolve();
+          })
+        );
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 }
